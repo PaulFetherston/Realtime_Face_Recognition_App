@@ -14,23 +14,6 @@ def new_button_pressed():
     image_import.adduser()
 
 
-# app = QApplication([])
-# win = QMainWindow()
-# central_widget = QWidget()
-#
-# button = QPushButton('Test', central_widget)
-# button.clicked.connect(button_pressed)
-#
-# button2 = QPushButton('Second Test', central_widget)
-# button2.clicked.connect(new_button_pressed)
-#
-# layout = QVBoxLayout(central_widget)
-# layout.addWidget(button)
-# layout.addWidget(button2)
-#
-# win.setCentralWidget(central_widget)
-# win.show()
-# app.exit(app.exec_())
 
 
 app = QApplication([])
