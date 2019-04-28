@@ -14,8 +14,6 @@ def new_button_pressed():
     image_import.adduser()
 
 
-
-
 app = QApplication([])
 win = QMainWindow()
 central_widget = QWidget()
