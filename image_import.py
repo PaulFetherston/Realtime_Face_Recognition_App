@@ -2,7 +2,9 @@ import face_recognition
 import cv2
 import pickle
 
-
+# TODO Ensure only one face is captured
+# TODO Confirmation of a sucsefully face capture
+# TODO Debug
 def adduser():
     # Get a reference to webcam #0 (the default one)
     video_capture = cv2.VideoCapture(0)

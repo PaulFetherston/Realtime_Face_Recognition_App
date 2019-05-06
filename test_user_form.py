@@ -123,6 +123,7 @@ class Ui_user_form(object):
         image_import.adduser()
 
     def update_db(self):
+        # TODO form validation
         print('user form call db test')
         fname = self.fname_lineEdit.text()
         sname = self.sname_lineEdit.text()
