@@ -9,6 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import (QWidget, QMainWindow, QToolTip, QPushButton, QApplication, QMessageBox, QDesktopWidget)
 import image_import
+import db_test_input_output
 
 class Ui_user_form(object):
     def setupUi(self, MainWindow):
@@ -34,24 +35,29 @@ class Ui_user_form(object):
         self.formLayout.setContentsMargins(15, 0, 15, 0)
         self.formLayout.setVerticalSpacing(4)
         self.formLayout.setObjectName("formLayout")
+
         self.label_fname = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_fname.setObjectName("label_fname")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_fname)
         self.fname_lineEdit = QtWidgets.QLineEdit(self.formLayoutWidget)
         self.fname_lineEdit.setObjectName("fname_lineEdit")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.fname_lineEdit)
+
+
         self.label_sname = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_sname.setObjectName("label_sname")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_sname)
         self.sname_lineEdit = QtWidgets.QLineEdit(self.formLayoutWidget)
         self.sname_lineEdit.setObjectName("sname_lineEdit")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.sname_lineEdit)
+
         self.dept_lineEdit = QtWidgets.QLineEdit(self.formLayoutWidget)
         self.dept_lineEdit.setObjectName("dept_lineEdit")
         self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.dept_lineEdit)
         self.label_dept = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_dept.setObjectName("label_dept")
         self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_dept)
+
         self.authority_spinBox = QtWidgets.QSpinBox(self.formLayoutWidget)
         self.authority_spinBox.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.authority_spinBox.setAlignment(QtCore.Qt.AlignCenter)
@@ -62,6 +68,7 @@ class Ui_user_form(object):
         self.label_authority = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_authority.setObjectName("label_authority")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_authority)
+
         self.dob_dateEdit = QtWidgets.QDateEdit(self.formLayoutWidget)
         self.dob_dateEdit.setAlignment(QtCore.Qt.AlignCenter)
         self.dob_dateEdit.setObjectName("dob_dateEdit")
@@ -69,17 +76,22 @@ class Ui_user_form(object):
         self.label_dob = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_dob.setObjectName("label_dob")
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_dob)
+
         self.face_capture_pushButton = QtWidgets.QPushButton(self.formLayoutWidget)
         self.face_capture_pushButton.setObjectName("face_capture_pushButton")
         self.face_capture_pushButton.clicked.connect(self.launch_webcam)
-
         self.formLayout.setWidget(6, QtWidgets.QFormLayout.SpanningRole, self.face_capture_pushButton)
+
         self.btn_submit = QtWidgets.QPushButton(self.centralwidget)
         self.btn_submit.setGeometry(QtCore.QRect(130, 270, 260, 27))
         self.btn_submit.setObjectName("btn_submit")
+        self.btn_submit.clicked.connect(self.update_db)
+
         self.btn_cancel = QtWidgets.QPushButton(self.centralwidget)
         self.btn_cancel.setGeometry(QtCore.QRect(440, 270, 85, 27))
         self.btn_cancel.setObjectName("btn_cancel")
+        self.btn_cancel.clicked.connect(self.read_db)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 25))
@@ -88,7 +100,6 @@ class Ui_user_form(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -110,6 +121,24 @@ class Ui_user_form(object):
     def launch_webcam(self):
         print('Face Recognition')
         image_import.adduser()
+
+    def update_db(self):
+        print('user form call db test')
+        fname = self.fname_lineEdit.text()
+        sname = self.sname_lineEdit.text()
+        dob = self.dob_dateEdit.date().toPyDate()
+        dept = self.dept_lineEdit.text()
+        access = self.authority_spinBox.value()
+        print(fname, " : ", sname)
+        print(dob)
+        print(dept)
+        print(access)
+        db_test_input_output.db_update(fname, sname, dob, dept, access)
+
+    def read_db(self):
+        print('cancel button calling db read')
+
+        db_test_input_output.db_retrieve()
 
 
 if __name__ == "__main__":
