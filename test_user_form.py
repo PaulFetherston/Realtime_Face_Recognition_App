@@ -82,6 +82,20 @@ class Ui_user_form(object):
         self.face_capture_pushButton.clicked.connect(self.launch_webcam)
         self.formLayout.setWidget(6, QtWidgets.QFormLayout.SpanningRole, self.face_capture_pushButton)
 
+        self.label_face_captured = QtWidgets.QLabel(self.formLayoutWidget)
+        self.label_face_captured.setObjectName("label_face_captured")
+        self.formLayout.setWidget(7, QtWidgets.QFormLayout.LabelRole, self.label_face_captured)
+        # self.label_face_captured.hide()
+
+        self.check_box = QtWidgets.QCheckBox(self.formLayoutWidget)
+        self.check_box.setObjectName("check_box")
+        self.formLayout.setWidget(7, QtWidgets.QFormLayout.FieldRole, self.check_box)
+        self.check_box.setChecked(False)
+        self.check_box.setEnabled(False)
+        self.check_box.hide()
+        self.check_box.toggle()
+        self.check_box.toggled.connect(self.prevent_toggle)
+
         self.btn_submit = QtWidgets.QPushButton(self.centralwidget)
         self.btn_submit.setGeometry(QtCore.QRect(130, 270, 260, 27))
         self.btn_submit.setObjectName("btn_submit")
@@ -115,15 +129,24 @@ class Ui_user_form(object):
         self.label_authority.setText(_translate("MainWindow", "Access Level"))
         self.label_dob.setText(_translate("MainWindow", "Date of Birth"))
         self.face_capture_pushButton.setText(_translate("MainWindow", "Capture "))
+
+        self.label_face_captured.setText(_translate("MainWindow", "No Image Captured"))
+
         self.btn_submit.setText(_translate("MainWindow", "Submit"))
         self.btn_cancel.setText(_translate("MainWindow", "Cancel"))
 
     def launch_webcam(self):
-        print('Face Recognition launch_webcam in test_user_form')
+
         face_encodings = image_import.adduser()
 
-        print('face encodings = ', type(face_encodings))
-        print(face_encodings)
+        if len(face_encodings) == 128:
+            self.label_face_captured.setText(QtCore.QCoreApplication.translate("MainWindow", "Image Captured   "))
+            self.check_box.show()
+            self.check_box.setEnabled(True)
+            self.check_box.setChecked(True)
+        else:
+            self.label_face_captured.setText(QtCore.QCoreApplication.translate("MainWindow", "No Image Captured"))
+            self.check_box.hide()
 
     def update_db(self):
         # TODO form validation
@@ -143,6 +166,9 @@ class Ui_user_form(object):
         print('cancel button calling db read')
 
         db_test_input_output.db_retrieve()
+
+    def prevent_toggle(self):
+        self.check_box.setChecked(QtCore.Qt.Checked)
 
 
 if __name__ == "__main__":

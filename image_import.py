@@ -1,5 +1,6 @@
 import face_recognition
 import cv2
+import numpy as np
 
 # TODO Tidy up the displayed details
 # TODO Debug
@@ -7,7 +8,7 @@ import cv2
 
 def adduser():
     # Variable to return if no image captured
-    face_encoding = 1
+    face_encoding = np.array([1])
 
     # Get a reference to camera
     video_capture = cv2.VideoCapture(0)
