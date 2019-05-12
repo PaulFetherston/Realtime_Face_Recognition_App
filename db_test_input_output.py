@@ -23,7 +23,12 @@ def db_retrieve():
 
             for row in records:
                 print("Id = ", row[0])
-                print("Name = ", row[1])
+                print("F_Name = ", row[1])
+                print("L_Name = ", row[2])
+                print("DOB = ", row[3])
+                print("department = ", row[4])
+                print("Access Lvl = ", row[5])
+                print("--------------------------------------- ")
 
             cursor.close()
 

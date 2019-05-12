@@ -108,9 +108,9 @@ class Ui_user_form(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.title.setText(_translate("MainWindow", "Add a New User"))
         self.label_fname.setText(_translate("MainWindow", "First Name"))
-        self.fname_lineEdit.setText(_translate("MainWindow", "First Name"))
+        self.fname_lineEdit.setText(_translate("MainWindow", "First_Name"))
         self.label_sname.setText(_translate("MainWindow", "Second Name"))
-        self.sname_lineEdit.setText(_translate("MainWindow", "Second Name"))
+        self.sname_lineEdit.setText(_translate("MainWindow", "Second_Name"))
         self.label_dept.setText(_translate("MainWindow", "Department"))
         self.label_authority.setText(_translate("MainWindow", "Access Level"))
         self.label_dob.setText(_translate("MainWindow", "Date of Birth"))
@@ -119,8 +119,11 @@ class Ui_user_form(object):
         self.btn_cancel.setText(_translate("MainWindow", "Cancel"))
 
     def launch_webcam(self):
-        print('Face Recognition')
-        image_import.adduser()
+        print('Face Recognition launch_webcam in test_user_form')
+        face_encodings = image_import.adduser()
+
+        print('face encodings = ', type(face_encodings))
+        print(face_encodings)
 
     def update_db(self):
         # TODO form validation
