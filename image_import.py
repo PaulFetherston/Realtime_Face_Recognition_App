@@ -6,7 +6,7 @@ import numpy as np
 # TODO Debug
 
 
-def adduser():
+def add_user():
     # Variable to return if no image captured
     face_encoding = np.array([1])
 
@@ -88,10 +88,3 @@ def adduser():
 
     # Return the face_encoding
     return face_encoding
-
-    # ex_dict = {1: name, 2: face_encoding}
-
-    # with open('/home/paul/sdp/pickle_folder/{}.pickle'.format(name), 'wb') as f:
-    #     pickle.dump(ex_dict, f)
-
-    # f.close()

@@ -4,6 +4,7 @@ import dlib.cuda as cuda
 import dlib
 import pickle
 from pathlib import Path
+import db_test_input_output
 
 print("Number of devices found = ", cuda.get_num_devices())
 
@@ -13,9 +14,9 @@ print("Is dlib use cuda = ", dlib.DLIB_USE_CUDA)
 directory_in_str = "/home/paul/sdp/pickle_folder"
 
 # Initialize some variables
-face_locations = []
-face_encodings = []
-face_names = []
+# face_locations = []
+# face_encodings = []
+# face_names = []
 process_this_frame = True
 
 known_face_encodings = []
@@ -23,16 +24,22 @@ known_face_names = []
 
 
 def run_face():
-    pathlist = Path(directory_in_str).glob('**/*.pickle')
+    path_list = Path(directory_in_str).glob('**/*.pickle')
 
-    for path in pathlist:
+    for path in path_list:
         # because path is object not string
         path_in_str = str(path)
-        # print("Path to pickle file: ", path_in_str)
         pickle_in = open(path_in_str, "rb")
         loaded_person = pickle.load(pickle_in)
-        known_face_names.append(loaded_person[1])
         known_face_encodings.append(loaded_person[2])
+
+    records = db_test_input_output.db_retrieve()
+
+    for row in records:
+        known_face_names.append(row[1])
+
+    for name in known_face_names:
+        print('name = ', name)
 
     # Get a reference to webcam #0 (the default one)
     video_capture = cv2.VideoCapture(0)

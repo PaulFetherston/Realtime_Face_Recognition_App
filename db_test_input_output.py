@@ -7,32 +7,20 @@ def db_retrieve():
     try:
         print("Retrieve data:")
 
-        # sql_insert_query = """SELECT * FROM %s""" % (table)
-        sql_insert_query = """SELECT * FROM sdptest"""
+        sql_query = """SELECT * FROM sdptest ORDER BY Id DESC"""
 
         if connection.is_connected():
-            db_Info = connection.get_server_info()
-            print("Connected to mysql database... MySQL Server version on ", db_Info)
+            db_info = connection.get_server_info()
+            print("Connected to mysql database... MySQL Server version on ", db_info)
 
             cursor = connection.cursor()
-            cursor.execute(sql_insert_query)
+            cursor.execute(sql_query)
             records = cursor.fetchall()
 
             print("Total number of rows = ", cursor.rowcount)
-            # print("Each row's values")
-
-            for row in records:
-                print("Id = ", row[0])
-                print("F_Name = ", row[1])
-                print("L_Name = ", row[2])
-                print("DOB = ", row[3])
-                print("department = ", row[4])
-                print("Access Lvl = ", row[5])
-                print("--------------------------------------- ")
-
             cursor.close()
 
-        print('retreive ******************************')
+        print('retrieved ******************************')
 
     except Error as e:
         connection.rollback()  # rollback if any exceptions
@@ -43,23 +31,33 @@ def db_retrieve():
         if connection.is_connected():
             connection.close()
             print("MySQL is closed")
+            return records
 
 
 def db_update(fname, sname, dob, dept, access):
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
     try:
-        print("Update data:")
-        name = "Bob"
+        print("Update database:")
+
         sql_insert_query = """INSERT INTO sdptest (fname, sname, dob, dept, access) VALUES ("%s", "%s", 
                                                     "%s", "%s", "%i")""" % (fname, sname, dob, dept, access)
+        sql_user_id = """SELECT * FROM sdptest ORDER BY id DESC LIMIT 1"""
 
         if connection.is_connected():
-            db_Info = connection.get_server_info()
-            print("Connected to mysql database... MySQL Server version on ", db_Info)
+            db_info = connection.get_server_info()
+            print("Connected to mysql database... MySQL Server version on ", db_info)
 
             cursor = connection.cursor()
             cursor.execute(sql_insert_query)
             connection.commit()
+
+            cursor.execute(sql_user_id)
+            records = cursor.fetchall()
+
+            print("Total number of rows ************ = ", cursor.rowcount)
+            for row in records:
+                print("Id =========== ", row[0])
+                id = row[0]
 
             print("Record inserted into table")
 
@@ -74,3 +72,4 @@ def db_update(fname, sname, dob, dept, access):
         if connection.is_connected():
             connection.close()
             print("MySQL is closed")
+            return id

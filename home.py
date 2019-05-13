@@ -63,6 +63,7 @@ import realtime_face_recognition
 
 
 class Ui_MainWindow(QMainWindow):
+    # TODO Comment Code
 
     def __init__(self):
         super().__init__()

@@ -10,9 +10,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import (QWidget, QMainWindow, QToolTip, QPushButton, QApplication, QMessageBox, QDesktopWidget)
 import image_import
 import db_test_input_output
+import pickle
+import numpy as np
+
+face_encoding = np.array([1])
 
 class Ui_user_form(object):
+
     def setupUi(self, MainWindow):
+        # TODO Comment Code
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -104,7 +110,7 @@ class Ui_user_form(object):
         self.btn_cancel = QtWidgets.QPushButton(self.centralwidget)
         self.btn_cancel.setGeometry(QtCore.QRect(440, 270, 85, 27))
         self.btn_cancel.setObjectName("btn_cancel")
-        self.btn_cancel.clicked.connect(self.read_db)
+        self.btn_cancel.clicked.connect(self.cancel_btn)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -118,6 +124,7 @@ class Ui_user_form(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        # TODO Comment Code
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.title.setText(_translate("MainWindow", "Add a New User"))
@@ -135,11 +142,14 @@ class Ui_user_form(object):
         self.btn_submit.setText(_translate("MainWindow", "Submit"))
         self.btn_cancel.setText(_translate("MainWindow", "Cancel"))
 
+    # Launch camera to take a picture of a new person
     def launch_webcam(self):
+        # TODO Comment Code
+        global face_encoding
 
-        face_encodings = image_import.adduser()
+        face_encoding = image_import.add_user()
 
-        if len(face_encodings) == 128:
+        if len(face_encoding) == 128:
             self.label_face_captured.setText(QtCore.QCoreApplication.translate("MainWindow", "Image Captured   "))
             self.check_box.show()
             self.check_box.setEnabled(True)
@@ -148,25 +158,38 @@ class Ui_user_form(object):
             self.label_face_captured.setText(QtCore.QCoreApplication.translate("MainWindow", "No Image Captured"))
             self.check_box.hide()
 
+    # Function to add new user to the database
     def update_db(self):
         # TODO form validation
+
+        global face_encoding
+
         print('user form call db test')
+        # Put user info into variables
         fname = self.fname_lineEdit.text()
         sname = self.sname_lineEdit.text()
         dob = self.dob_dateEdit.date().toPyDate()
         dept = self.dept_lineEdit.text()
         access = self.authority_spinBox.value()
-        print(fname, " : ", sname)
-        print(dob)
-        print(dept)
-        print(access)
-        db_test_input_output.db_update(fname, sname, dob, dept, access)
 
-    def read_db(self):
-        print('cancel button calling db read')
+        # Pass user info to script to insert into DB and return the new user's ID number
+        user_id = db_test_input_output.db_update(fname, sname, dob, dept, access)
 
-        db_test_input_output.db_retrieve()
+        print('Type of face_encoding = ', type(face_encoding))
+        print('Length of face_encoding = ', len(face_encoding))
 
+        ex_dict = {1: 'user_{}'.format(user_id), 2: face_encoding}
+
+        with open('/home/paul/sdp/pickle_folder/user_{}.pickle'.format(user_id), 'wb') as f:
+            pickle.dump(ex_dict, f)
+
+        f.close()
+
+    def cancel_btn(self):
+        # TODO Configure button effects on form
+        print('cancel button pressed')
+
+    # Function to prevent checkbox from being unchecked by a user
     def prevent_toggle(self):
         self.check_box.setChecked(QtCore.Qt.Checked)
 
