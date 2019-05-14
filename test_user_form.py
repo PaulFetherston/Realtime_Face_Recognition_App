@@ -12,6 +12,8 @@ import image_import
 import db_test_input_output
 import pickle
 import numpy as np
+import cerberus
+import datetime
 
 face_encoding = np.array([1])
 
@@ -129,9 +131,9 @@ class Ui_user_form(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.title.setText(_translate("MainWindow", "Add a New User"))
         self.label_fname.setText(_translate("MainWindow", "First Name"))
-        self.fname_lineEdit.setText(_translate("MainWindow", "First_Name"))
+        # self.fname_lineEdit.setText(_translate("MainWindow", ""))
         self.label_sname.setText(_translate("MainWindow", "Second Name"))
-        self.sname_lineEdit.setText(_translate("MainWindow", "Second_Name"))
+        # self.sname_lineEdit.setText(_translate("MainWindow", "Second_Name"))
         self.label_dept.setText(_translate("MainWindow", "Department"))
         self.label_authority.setText(_translate("MainWindow", "Access Level"))
         self.label_dob.setText(_translate("MainWindow", "Date of Birth"))
@@ -164,34 +166,86 @@ class Ui_user_form(object):
 
         global face_encoding
 
-        print('user form call db test')
-        # Put user info into variables
-        fname = self.fname_lineEdit.text()
-        sname = self.sname_lineEdit.text()
-        dob = self.dob_dateEdit.date().toPyDate()
-        dept = self.dept_lineEdit.text()
-        access = self.authority_spinBox.value()
+        form_valid = self.form_validation()
 
-        # Pass user info to script to insert into DB and return the new user's ID number
-        user_id = db_test_input_output.db_update(fname, sname, dob, dept, access)
+        if form_valid:
 
-        print('Type of face_encoding = ', type(face_encoding))
-        print('Length of face_encoding = ', len(face_encoding))
+            print('user form call db test')
+            # Put user info into variables
+            fname = self.fname_lineEdit.text()
+            sname = self.sname_lineEdit.text()
+            dob = self.dob_dateEdit.date().toPyDate()
+            dept = self.dept_lineEdit.text()
+            access = self.authority_spinBox.value()
 
-        ex_dict = {1: 'user_{}'.format(user_id), 2: face_encoding}
+            # Pass user info to script to insert into DB and return the new user's ID number
+            user_id = db_test_input_output.db_update(fname, sname, dob, dept, access)
+            # Create a dictionary with user ID and the face encoding
+            ex_dict = {1: 'user_{}'.format(user_id), 2: face_encoding}
+            # Pickle dictionary. Name it with the user id
+            with open('/home/paul/sdp/pickle_folder/user_{}.pickle'.format(user_id), 'wb') as f:
+                pickle.dump(ex_dict, f)
 
-        with open('/home/paul/sdp/pickle_folder/user_{}.pickle'.format(user_id), 'wb') as f:
-            pickle.dump(ex_dict, f)
+            f.close()
+            self.form_reset()
 
-        f.close()
+        else:
+            QtWidgets.QMessageBox.information(QtWidgets.QMainWindow(), 'Message', 'Form Not Complete',
+                                              QMessageBox.Ok)
 
     def cancel_btn(self):
         # TODO Configure button effects on form
         print('cancel button pressed')
+        # self.closeEvent(QtWidgets.QMainWindow().close())
+        QMainWindow.close(QtWidgets.QMainWindow())
 
     # Function to prevent checkbox from being unchecked by a user
     def prevent_toggle(self):
         self.check_box.setChecked(QtCore.Qt.Checked)
+
+    def form_validation(self):
+        schema = {'fname': {'required': True, 'type': 'string', 'empty': False},
+                  'lname': {'required': True, 'type': 'string', 'empty': False},
+                  'dob': {'required': True, 'type': 'date', 'empty': False},
+                  'dept': {'required': True, 'type': 'string', 'empty': False},
+                  'access': {'required': True, 'type': 'integer', 'empty': False, 'min': 1, 'max': 3},
+                  'face': {'required': True, 'type': 'integer', 'empty': False, 'min': 128, 'max': 128}}
+
+        document = {'fname': self.fname_lineEdit.text(),
+                    'lname': self.sname_lineEdit.text(),
+                    'dob': self.dob_dateEdit.date().toPyDate(),
+                    'dept': self.dept_lineEdit.text(),
+                    'access': self.authority_spinBox.value(),
+                    'face': len(face_encoding)}
+        v = cerberus.Validator(schema)
+        print('Cerberus : ', v.validate(document))
+        print(v.errors)
+
+        return v.validate(document)
+
+    def form_reset(self):
+        global face_encoding
+        _translate = QtCore.QCoreApplication.translate
+        self.fname_lineEdit.setText(_translate("MainWindow", ""))
+        self.sname_lineEdit.setText(_translate("MainWindow", ""))
+        self.dob_dateEdit.setDate(datetime.date.today())
+        self.dept_lineEdit.setText(_translate("MainWindow", ""))
+        self.authority_spinBox.setValue(1)
+        face_encoding = np.array([1])
+        self.label_face_captured.setText(_translate("MainWindow", "No Image Captured"))
+        self.check_box.hide()
+
+    # Confirm close window
+    def closeEvent(self, event):
+
+        reply = QMessageBox.question(QtWidgets.QMainWindow(), 'Message',
+                                     "Are you sure to quit?", QMessageBox.Yes |
+                                     QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
 
 
 if __name__ == "__main__":
