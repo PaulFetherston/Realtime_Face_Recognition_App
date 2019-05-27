@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'user_form_mainWindow.ui'
+# Form implementation generated from reading ui file 'untitled.ui'
 #
 # Created by: PyQt5 UI code generator 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import (QWidget, QMainWindow, QToolTip, QPushButton, QApplication, QMessageBox, QDesktopWidget)
+from PyQt5.QtGui import QFont, QIcon
 import image_import
 import db_test_input_output
 import pickle
@@ -18,9 +20,27 @@ import datetime
 face_encoding = np.array([1])
 
 
-class Ui_user_form(object):
+# class UIToolTab(object):
+#     def setupUI(self, MainWindow):
+#         MainWindow.setGeometry(50, 50, 400, 450)
+#         MainWindow.setFixedSize(400, 450)
+#         MainWindow.setWindowTitle("TEST TEST")
+#         self.centralwidget = QWidget(MainWindow)
+#         self.CPSBTN = QPushButton("text2", self.centralwidget)
+#         self.CPSBTN.move(100, 350)
+#         # MainWindow.setCentralWidget(self.centralwidget)
+#
+#         self.btn_submit = QPushButton("submitt", self.centralwidget)
+#         self.CPSBTN.move(100, 350)
+#
+#         MainWindow.setCentralWidget(self.centralwidget)
+#
+#
+# def random():
+#     print("hello again")
 
-    def setupUi(self, MainWindow):
+class UIToolTab(object):
+    def setupUI(self, MainWindow):
         # TODO Comment Code
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -112,7 +132,7 @@ class Ui_user_form(object):
         self.btn_cancel = QtWidgets.QPushButton(self.centralwidget)
         self.btn_cancel.setGeometry(QtCore.QRect(440, 270, 85, 27))
         self.btn_cancel.setObjectName("btn_cancel")
-        self.btn_cancel.clicked.connect(self.cancel_btn)
+        # self.btn_cancel.clicked.connect(self.cancel_btn)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -197,7 +217,7 @@ class Ui_user_form(object):
         # TODO Configure button effects on form
         print('cancel button pressed')
         # self.closeEvent(QtWidgets.QMainWindow().close())
-        self.MainWindow.close()
+        print("cancel_btn() - ---------  YYYYYY")
 
     # Function to prevent checkbox from being unchecked by a user
     def prevent_toggle(self):
@@ -247,12 +267,3 @@ class Ui_user_form(object):
         else:
             event.ignore()
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_user_form()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
