@@ -34,10 +34,10 @@ def db_retrieve():
             return records
 
 
-def db_update(fname, sname, dob, dept, access):
+def db_insert(fname, sname, dob, dept, access):
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
     try:
-        print("Update database:")
+        print("Insert database:")
 
         sql_insert_query = """INSERT INTO sdptest (fname, sname, dob, dept, access) VALUES ("%s", "%s", 
                                                     "%s", "%s", "%i")""" % (fname, sname, dob, dept, access)
@@ -73,3 +73,77 @@ def db_update(fname, sname, dob, dept, access):
             connection.close()
             print("MySQL is closed")
             return id
+
+
+def db_search(fname, sname):
+    connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
+    try:
+        print("Search database:")
+
+        sql_search_query = """SELECT id, fname, sname, dob, dept, access FROM sdptest WHERE fname="%s" AND sname="%s";
+                            """ % (fname, sname)
+
+        if connection.is_connected():
+            db_info = connection.get_server_info()
+            print("Connected to mysql database... MySQL Server version on ", db_info)
+
+            cursor = connection.cursor()
+            cursor.execute(sql_search_query)
+            records = cursor.fetchall()
+
+            print("Total number of rows ************ = ", cursor.rowcount)
+            for row in records:
+                print("Id =========== ", row[0])
+                print("name =========== ", row[1])
+                print("last =========== ", row[2])
+                print("dob =========== ", row[3])
+                print("dept =========== ", row[4])
+                print("Access =========== ", row[5])
+
+
+
+            print("Searched Records")
+
+            cursor.close()
+
+    except Error as e:
+        connection.rollback()  # rollback if any exceptions
+        print("Error while connecting to MYSQL ", e)
+
+    finally:
+        # Closing connection to db
+        if connection.is_connected():
+            connection.close()
+            print("MySQL is closed")
+            return records
+
+
+def db_update(usr_id, fname, sname, dob, dept, access):
+    connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
+    try:
+        print("Update database:")
+
+        sql_update_query = """UPDATE sdptest SET fname="%s", sname="%s", dob="%s", dept="%s", access="%i" 
+                            WHERE id="%i";""" % (fname, sname, dob, dept, access, usr_id)
+
+        if connection.is_connected():
+            db_info = connection.get_server_info()
+            print("Connected to mysql database... MySQL Server version on ", db_info)
+
+            cursor = connection.cursor()
+            cursor.execute(sql_update_query)
+            connection.commit()
+
+            print("Record Updated into table")
+
+            cursor.close()
+
+    except Error as e:
+        connection.rollback()  # rollback if any exceptions
+        print("Error while connecting to MYSQL ", e)
+
+    finally:
+        # Closing connection to db
+        if connection.is_connected():
+            connection.close()
+            print("MySQL is closed")

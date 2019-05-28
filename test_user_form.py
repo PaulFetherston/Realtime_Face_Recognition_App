@@ -14,6 +14,7 @@ import pickle
 import numpy as np
 import cerberus
 import datetime
+import validator
 
 face_encoding = np.array([1])
 
@@ -24,17 +25,22 @@ class Ui_user_form(object):
         # TODO Comment Code
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(300, 10, 111, 31))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+
         self.title = QtWidgets.QLabel(self.verticalLayoutWidget)
         self.title.setObjectName("title")
         self.verticalLayout_2.addWidget(self.title)
+
         self.formLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.formLayoutWidget.setGeometry(QtCore.QRect(130, 50, 451, 200))
         self.formLayoutWidget.setObjectName("formLayoutWidget")
@@ -166,7 +172,9 @@ class Ui_user_form(object):
 
         global face_encoding
 
-        form_valid = self.form_validation()
+        form_valid = validator.form_validation(self.fname_lineEdit.text(), self.sname_lineEdit.text(),
+                                               self.dob_dateEdit.date().toPyDate(), self.dept_lineEdit.text(),
+                                               self.authority_spinBox.value(), len(face_encoding))
 
         if form_valid:
 
@@ -179,7 +187,7 @@ class Ui_user_form(object):
             access = self.authority_spinBox.value()
 
             # Pass user info to script to insert into DB and return the new user's ID number
-            user_id = db_test_input_output.db_update(fname, sname, dob, dept, access)
+            user_id = db_test_input_output.db_insert(fname, sname, dob, dept, access)
             # Create a dictionary with user ID and the face encoding
             ex_dict = {1: 'user_{}'.format(user_id), 2: face_encoding}
             # Pickle dictionary. Name it with the user id
@@ -202,26 +210,6 @@ class Ui_user_form(object):
     # Function to prevent checkbox from being unchecked by a user
     def prevent_toggle(self):
         self.check_box.setChecked(QtCore.Qt.Checked)
-
-    def form_validation(self):
-        schema = {'fname': {'required': True, 'type': 'string', 'empty': False},
-                  'lname': {'required': True, 'type': 'string', 'empty': False},
-                  'dob': {'required': True, 'type': 'date', 'empty': False},
-                  'dept': {'required': True, 'type': 'string', 'empty': False},
-                  'access': {'required': True, 'type': 'integer', 'empty': False, 'min': 1, 'max': 3},
-                  'face': {'required': True, 'type': 'integer', 'empty': False, 'min': 128, 'max': 128}}
-
-        document = {'fname': self.fname_lineEdit.text(),
-                    'lname': self.sname_lineEdit.text(),
-                    'dob': self.dob_dateEdit.date().toPyDate(),
-                    'dept': self.dept_lineEdit.text(),
-                    'access': self.authority_spinBox.value(),
-                    'face': len(face_encoding)}
-        v = cerberus.Validator(schema)
-        print('Cerberus : ', v.validate(document))
-        print(v.errors)
-
-        return v.validate(document)
 
     def form_reset(self):
         global face_encoding

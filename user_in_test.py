@@ -20,41 +20,23 @@ import datetime
 face_encoding = np.array([1])
 
 
-# class UIToolTab(object):
-#     def setupUI(self, MainWindow):
-#         MainWindow.setGeometry(50, 50, 400, 450)
-#         MainWindow.setFixedSize(400, 450)
-#         MainWindow.setWindowTitle("TEST TEST")
-#         self.centralwidget = QWidget(MainWindow)
-#         self.CPSBTN = QPushButton("text2", self.centralwidget)
-#         self.CPSBTN.move(100, 350)
-#         # MainWindow.setCentralWidget(self.centralwidget)
-#
-#         self.btn_submit = QPushButton("submitt", self.centralwidget)
-#         self.CPSBTN.move(100, 350)
-#
-#         MainWindow.setCentralWidget(self.centralwidget)
-#
-#
-# def random():
-#     print("hello again")
-
-class UIToolTab(object):
+class UIUserForm(object):
     def setupUI(self, MainWindow):
         # TODO Comment Code
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(300, 10, 111, 31))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.title = QtWidgets.QLabel(self.verticalLayoutWidget)
         self.title.setObjectName("title")
         self.verticalLayout_2.addWidget(self.title)
+
         self.formLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.formLayoutWidget.setGeometry(QtCore.QRect(130, 50, 451, 200))
         self.formLayoutWidget.setObjectName("formLayoutWidget")
@@ -102,6 +84,7 @@ class UIToolTab(object):
         self.authority_spinBox.setMaximum(3)
         self.authority_spinBox.setObjectName("authority_spinBox")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.authority_spinBox)
+
         self.label_authority = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_authority.setObjectName("label_authority")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_authority)
@@ -114,7 +97,6 @@ class UIToolTab(object):
         self.label_face_captured = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_face_captured.setObjectName("label_face_captured")
         self.formLayout.setWidget(7, QtWidgets.QFormLayout.LabelRole, self.label_face_captured)
-        # self.label_face_captured.hide()
         self.check_box = QtWidgets.QCheckBox(self.formLayoutWidget)
         self.check_box.setObjectName("check_box")
         self.formLayout.setWidget(7, QtWidgets.QFormLayout.FieldRole, self.check_box)
@@ -125,12 +107,12 @@ class UIToolTab(object):
         self.check_box.toggled.connect(self.prevent_toggle)
 
         self.btn_submit = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_submit.setGeometry(QtCore.QRect(130, 270, 260, 27))
+        self.btn_submit.setGeometry(QtCore.QRect(145, 270, 275, 27))
         self.btn_submit.setObjectName("btn_submit")
         self.btn_submit.clicked.connect(self.update_db)
 
         self.btn_cancel = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_cancel.setGeometry(QtCore.QRect(440, 270, 85, 27))
+        self.btn_cancel.setGeometry(QtCore.QRect(440, 270, 125, 27))
         self.btn_cancel.setObjectName("btn_cancel")
         # self.btn_cancel.clicked.connect(self.cancel_btn)
 
@@ -148,7 +130,7 @@ class UIToolTab(object):
     def retranslateUi(self, MainWindow):
         # TODO Comment Code
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Add New User"))
         self.title.setText(_translate("MainWindow", "Add a New User"))
         self.label_fname.setText(_translate("MainWindow", "First Name"))
         # self.fname_lineEdit.setText(_translate("MainWindow", ""))
@@ -254,16 +236,4 @@ class UIToolTab(object):
         face_encoding = np.array([1])
         self.label_face_captured.setText(_translate("MainWindow", "No Image Captured"))
         self.check_box.hide()
-
-    # Confirm close window
-    def closeEvent(self, event):
-
-        reply = QMessageBox.question(QtWidgets.QMainWindow(), 'Message',
-                                     "Are you sure to quit?", QMessageBox.Yes |
-                                     QMessageBox.No, QMessageBox.No)
-
-        if reply == QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()
 
