@@ -40,9 +40,13 @@ def run_face():
 
     for row in records:
         known_face_names.append(row[1])
+        users_authority.append(row[5])
 
     for name in known_face_names:
         print('name = ', name)
+    for acc in users_authority:
+        print('access = ', acc)
+
 
     # Get a reference to webcam #0 (the default one)
     video_capture = cv2.VideoCapture(0)
@@ -72,12 +76,14 @@ def run_face():
                 # See if the face is a match for the known face(s)
                 matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
                 name = "Unknown"
+                access = 0
 
                 # If a match was found in known_face_encodings, just use the first one.
                 if True in matches:
                     first_match_index = matches.index(True)
                     print("True in matches index location", first_match_index)
                     name = known_face_names[first_match_index]
+                    access = users_authority[first_match_index]
 
                 face_names.append(name)
 
@@ -91,16 +97,7 @@ def run_face():
 
             mid = mid_point(left, right)
 
-            if name == 'Unknown':
-                # Draw a Red box around the face
-                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-
-                # Draw a label with a name below the face
-                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
-                font = cv2.FONT_HERSHEY_DUPLEX
-                cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
-
-            if name != 'Unknown' and mid < (w*0.5):
+            if (mid < (w*0.5) and access > 0) or (mid > (w*0.5) and access > 2):
                 # Draw a Green box around the face
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
 
@@ -108,7 +105,8 @@ def run_face():
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (0, 0, 0), 1)
-            else:
+
+            if mid > (w*0.5) and access < 2:
                 # Draw a Blue box around the face
                 cv2.rectangle(frame, (left, top), (right, bottom), (255, 0, 0), 2)
 
@@ -116,6 +114,15 @@ def run_face():
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (255, 0, 0), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (0, 0, 0), 1)
+
+            if access < 1:
+                # Draw a Red box around the face
+                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+
+                # Draw a label with a name below the face
+                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
 
         cv2.line(frame, (int(w*0.5), 0), (int(w*0.5), int(h)), (0, 255, 0), 2)
 
@@ -131,6 +138,7 @@ def run_face():
     # Release handle to the webcam
     video_capture.release()
     cv2.destroyAllWindows()
+
 
 def mid_point(x1, x2):
     temp = x1+x2

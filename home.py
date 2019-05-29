@@ -8,6 +8,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import (QWidget, QMainWindow, QPushButton, QMessageBox)
 import add_user
 import user_search
+import live_system
 import realtime_face_recognition
 
 
@@ -41,6 +42,7 @@ class MainWindow(QMainWindow):
         self.uiWindow = UIWindow()
         self.uiUserForm = add_user.UIUserForm()
         self.uiSearchUser = user_search.UISearchUser()
+        self.uiLiveSystem = live_system.UILiveSystem()
         self.startUIWindow()
 
     def startNewUser(self):
@@ -54,6 +56,11 @@ class MainWindow(QMainWindow):
         self.uiSearchUser.btn_reset.clicked.connect(self.startSearchUser)
         self.showMaximized()
 
+    def startLiveSystem(self):
+        self.uiLiveSystem.setupUI(self)
+        self.uiLiveSystem.CPSBTN.clicked.connect(self.startUIWindow)
+        self.showMaximized()
+
     def startUIWindow(self):
         self.uiWindow.setupUI(self)
         self.uiWindow.face_recognition_btn.clicked.connect(self.realtime_face_recognition)
@@ -63,6 +70,7 @@ class MainWindow(QMainWindow):
 
     def realtime_face_recognition(self):
         print('Face Recognition')
+        self.startLiveSystem()
         realtime_face_recognition.run_face()
 
     # Confirm close window
