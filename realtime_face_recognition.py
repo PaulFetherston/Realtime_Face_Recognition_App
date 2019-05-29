@@ -10,6 +10,7 @@ import dlib
 import pickle
 from pathlib import Path
 import db_interface
+import datetime
 
 print("Number of devices found = ", cuda.get_num_devices())
 
@@ -22,7 +23,7 @@ directory_in_str = "/home/paul/sdp/pickle_folder"
 process_this_frame = True
 known_face_encodings = []
 known_face_names = []
-users_onsite = []
+users_authority = []
 
 
 def run_face():
@@ -45,6 +46,10 @@ def run_face():
 
     # Get a reference to webcam #0 (the default one)
     video_capture = cv2.VideoCapture(0)
+
+    # Getting the width and height of the video screen
+    w = int(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+    h = int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     while True:
         # Grab a single frame of video
@@ -71,11 +76,10 @@ def run_face():
                 # If a match was found in known_face_encodings, just use the first one.
                 if True in matches:
                     first_match_index = matches.index(True)
+                    print("True in matches index location", first_match_index)
                     name = known_face_names[first_match_index]
 
                 face_names.append(name)
-
-    #    process_this_frame = not process_this_frame
 
         # Display the results
         for (top, right, bottom, left), name in zip(face_locations, face_names):
@@ -85,22 +89,35 @@ def run_face():
             bottom *= 4
             left *= 4
 
+            mid = mid_point(left, right)
+
             if name == 'Unknown':
-                # Draw a box around the face
+                # Draw a Red box around the face
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
                 # Draw a label with a name below the face
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
-            else:
-                # Draw a box around the face
+
+            if name != 'Unknown' and mid < (w*0.5):
+                # Draw a Green box around the face
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
 
                 # Draw a label with a name below the face
                 cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (0, 0, 0), 1)
+            else:
+                # Draw a Blue box around the face
+                cv2.rectangle(frame, (left, top), (right, bottom), (255, 0, 0), 2)
+
+                # Draw a label with a name below the face
+                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (255, 0, 0), cv2.FILLED)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (0, 0, 0), 1)
+
+        cv2.line(frame, (int(w*0.5), 0), (int(w*0.5), int(h)), (0, 255, 0), 2)
 
         # Display the resulting image
         cv2.imshow('Face Recognition', frame)
@@ -114,3 +131,10 @@ def run_face():
     # Release handle to the webcam
     video_capture.release()
     cv2.destroyAllWindows()
+
+def mid_point(x1, x2):
+    temp = x1+x2
+
+    return temp/2
+
+

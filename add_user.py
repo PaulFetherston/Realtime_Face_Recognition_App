@@ -186,7 +186,7 @@ class UIUserForm(object):
             # Pass user info to script to insert into DB and return the new user's ID number
             user_id = db_interface.db_insert(fname, sname, dob, dept, access)
             # Create a dictionary with user ID and the face encoding
-            ex_dict = {1: 'user_{}'.format(user_id), 2: face_encoding}
+            ex_dict = {1: 'user_{}'.format(user_id), 2: face_encoding, 3: access}
             # Pickle dictionary. Name it with the user id
             with open('/home/paul/sdp/pickle_folder/user_{}.pickle'.format(user_id), 'wb') as f:
                 pickle.dump(ex_dict, f)
