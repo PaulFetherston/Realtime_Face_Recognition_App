@@ -1,60 +1,65 @@
 # -*- coding: utf-8 -*-
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import (QWidget, QMainWindow, QToolTip, QPushButton, QApplication, QMessageBox, QDesktopWidget)
-from PyQt5.QtGui import QFont, QIcon
-from test_user_form import Ui_user_form
+# Paul Fetherston
+#
+# Student No: 2898842
+
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import (QWidget, QMainWindow, QPushButton, QMessageBox)
+import add_user
+import user_search
 import realtime_face_recognition
 
 
-class Ui_MainWindow(QMainWindow):
-    # TODO Comment Code
+class UIWindow(object):
+    def setupUI(self, MainWindow):
+        MainWindow.setWindowTitle("Facial Recognition App")
 
-    def __init__(self):
-        super().__init__()
-        self.centralwidget = QtWidgets.QWidget(self)
-        self.face_recognition_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.add_user_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(self)
-        self.statusbar = QtWidgets.QStatusBar(self)
-        self.center()
-        self.initUI()
-
-    def initUI(self):
-        self.setObjectName("MainWindow")
-        self.resize(800, 600)
-
+        self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
 
+        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
+
+        self.face_recognition_btn = QPushButton('Face Recognition', self.centralwidget)
         self.face_recognition_btn.setGeometry(QtCore.QRect(250, 140, 261, 27))
         self.face_recognition_btn.setObjectName("face_recognition_btn")
-        self.face_recognition_btn.clicked.connect(self.realtime_face_recognition)
 
+        self.add_user_btn = QPushButton('Add User', self.centralwidget)
         self.add_user_btn.setGeometry(QtCore.QRect(250, 170, 261, 27))
         self.add_user_btn.setObjectName("add_user_btn")
-        self.add_user_btn.clicked.connect(self.user_form)
 
-        self.setCentralWidget(self.centralwidget)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 25))
-        self.menubar.setObjectName("menubar")
-        self.setMenuBar(self.menubar)
-        self.statusbar.setObjectName("statusbar")
-        self.setStatusBar(self.statusbar)
-        self.retranslateUi(self)
-        QtCore.QMetaObject.connectSlotsByName(self)
-        self.show()
+        self.ser_user_btn = QPushButton('Search User', self.centralwidget)
+        self.ser_user_btn.setGeometry(QtCore.QRect(250, 200, 261, 27))
+        self.ser_user_btn.setObjectName("ser_user_btn")
 
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.face_recognition_btn.setText(_translate("MainWindow", "Face Recognition"))
-        self.add_user_btn.setText(_translate("MainWindow", "Add User"))
+        MainWindow.setCentralWidget(self.centralwidget)
 
-    def user_form(self):
-        self.window = QtWidgets.QMainWindow()
-        self.ui = Ui_user_form()
-        self.ui.setupUi(self.window)
-        self.window.show()
+
+class MainWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super(MainWindow, self).__init__(parent)
+        self.uiWindow = UIWindow()
+        self.uiUserForm = add_user.UIUserForm()
+        self.uiSearchUser = user_search.UISearchUser()
+        self.startUIWindow()
+
+    def startNewUser(self):
+        self.uiUserForm.setupUI(self)
+        self.uiUserForm.btn_cancel.clicked.connect(self.startUIWindow)
+        self.showMaximized()
+
+    def startSearchUser(self):
+        self.uiSearchUser.setupUI(self)
+        self.uiSearchUser.btn_cancel.clicked.connect(self.startUIWindow)
+        self.uiSearchUser.btn_reset.clicked.connect(self.startSearchUser)
+        self.showMaximized()
+
+    def startUIWindow(self):
+        self.uiWindow.setupUI(self)
+        self.uiWindow.face_recognition_btn.clicked.connect(self.realtime_face_recognition)
+        self.uiWindow.add_user_btn.clicked.connect(self.startNewUser)
+        self.uiWindow.ser_user_btn.clicked.connect(self.startSearchUser)
+        self.showMaximized()
 
     def realtime_face_recognition(self):
         print('Face Recognition')
@@ -71,11 +76,3 @@ class Ui_MainWindow(QMainWindow):
             event.accept()
         else:
             event.ignore()
-
-    # Center App on the screen
-    def center(self):
-
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())

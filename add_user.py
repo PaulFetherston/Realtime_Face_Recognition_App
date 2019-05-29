@@ -1,34 +1,27 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'user_form_mainWindow.ui'
+# Paul Fetherston
 #
-# Created by: PyQt5 UI code generator 5.12.1
-#
-# WARNING! All changes made in this file will be lost!
+# Student No: 2898842
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import (QWidget, QMainWindow, QToolTip, QPushButton, QApplication, QMessageBox, QDesktopWidget)
+from PyQt5.QtWidgets import ( QFrame, QMessageBox)
 import image_import
-import db_test_input_output
+import validator
+import db_interface
 import pickle
 import numpy as np
-import cerberus
 import datetime
-import validator
 
 face_encoding = np.array([1])
 
 
-class Ui_user_form(object):
-
-    def setupUi(self, MainWindow):
+class UIUserForm(object):
+    def setupUI(self, MainWindow):
         # TODO Comment Code
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
-
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(300, 10, 111, 31))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
@@ -36,7 +29,6 @@ class Ui_user_form(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-
         self.title = QtWidgets.QLabel(self.verticalLayoutWidget)
         self.title.setObjectName("title")
         self.verticalLayout_2.addWidget(self.title)
@@ -57,7 +49,6 @@ class Ui_user_form(object):
         self.fname_lineEdit = QtWidgets.QLineEdit(self.formLayoutWidget)
         self.fname_lineEdit.setObjectName("fname_lineEdit")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.fname_lineEdit)
-
 
         self.label_sname = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_sname.setObjectName("label_sname")
@@ -88,6 +79,7 @@ class Ui_user_form(object):
         self.authority_spinBox.setMaximum(3)
         self.authority_spinBox.setObjectName("authority_spinBox")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.authority_spinBox)
+
         self.label_authority = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_authority.setObjectName("label_authority")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_authority)
@@ -100,7 +92,6 @@ class Ui_user_form(object):
         self.label_face_captured = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_face_captured.setObjectName("label_face_captured")
         self.formLayout.setWidget(7, QtWidgets.QFormLayout.LabelRole, self.label_face_captured)
-        # self.label_face_captured.hide()
         self.check_box = QtWidgets.QCheckBox(self.formLayoutWidget)
         self.check_box.setObjectName("check_box")
         self.formLayout.setWidget(7, QtWidgets.QFormLayout.FieldRole, self.check_box)
@@ -111,14 +102,19 @@ class Ui_user_form(object):
         self.check_box.toggled.connect(self.prevent_toggle)
 
         self.btn_submit = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_submit.setGeometry(QtCore.QRect(130, 270, 260, 27))
+        self.btn_submit.setGeometry(QtCore.QRect(145, 270, 275, 27))
         self.btn_submit.setObjectName("btn_submit")
         self.btn_submit.clicked.connect(self.update_db)
 
         self.btn_cancel = QtWidgets.QPushButton(self.centralwidget)
-        self.btn_cancel.setGeometry(QtCore.QRect(440, 270, 85, 27))
+        self.btn_cancel.setGeometry(QtCore.QRect(440, 270, 125, 27))
         self.btn_cancel.setObjectName("btn_cancel")
-        self.btn_cancel.clicked.connect(self.cancel_btn)
+
+        self.label_user_added = QtWidgets.QLabel(self.centralwidget)
+        self.label_user_added.setGeometry(QtCore.QRect(145, 300, 275, 27))
+        self.label_user_added.setObjectName("label_user_added")
+        self.label_user_added.setFrameShape(QFrame.Panel)
+        self.label_user_added.hide()
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -134,7 +130,7 @@ class Ui_user_form(object):
     def retranslateUi(self, MainWindow):
         # TODO Comment Code
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Add New User"))
         self.title.setText(_translate("MainWindow", "Add a New User"))
         self.label_fname.setText(_translate("MainWindow", "First Name"))
         # self.fname_lineEdit.setText(_translate("MainWindow", ""))
@@ -149,6 +145,7 @@ class Ui_user_form(object):
 
         self.btn_submit.setText(_translate("MainWindow", "Submit"))
         self.btn_cancel.setText(_translate("MainWindow", "Cancel"))
+        self.label_user_added.setText(_translate("MainWindow", "Successfully added a new user"))
 
     # Launch camera to take a picture of a new person
     def launch_webcam(self):
@@ -187,7 +184,7 @@ class Ui_user_form(object):
             access = self.authority_spinBox.value()
 
             # Pass user info to script to insert into DB and return the new user's ID number
-            user_id = db_test_input_output.db_insert(fname, sname, dob, dept, access)
+            user_id = db_interface.db_insert(fname, sname, dob, dept, access)
             # Create a dictionary with user ID and the face encoding
             ex_dict = {1: 'user_{}'.format(user_id), 2: face_encoding}
             # Pickle dictionary. Name it with the user id
@@ -195,17 +192,13 @@ class Ui_user_form(object):
                 pickle.dump(ex_dict, f)
 
             f.close()
+            self.label_user_added.show()
             self.form_reset()
 
         else:
             QtWidgets.QMessageBox.information(QtWidgets.QMainWindow(), 'Message', 'Form Not Complete',
                                               QMessageBox.Ok)
-
-    def cancel_btn(self):
-        # TODO Configure button effects on form
-        print('cancel button pressed')
-        # self.closeEvent(QtWidgets.QMainWindow().close())
-        self.MainWindow.close()
+            self.label_user_added.hide()
 
     # Function to prevent checkbox from being unchecked by a user
     def prevent_toggle(self):
@@ -223,24 +216,3 @@ class Ui_user_form(object):
         self.label_face_captured.setText(_translate("MainWindow", "No Image Captured"))
         self.check_box.hide()
 
-    # Confirm close window
-    def closeEvent(self, event):
-
-        reply = QMessageBox.question(QtWidgets.QMainWindow(), 'Message',
-                                     "Are you sure to quit?", QMessageBox.Yes |
-                                     QMessageBox.No, QMessageBox.No)
-
-        if reply == QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_user_form()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())

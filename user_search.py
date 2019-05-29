@@ -1,23 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'untitled.ui'
+# Paul Fetherston
 #
-# Created by: PyQt5 UI code generator 5.12.1
-#
-# WARNING! All changes made in this file will be lost!
+# Student No: 2898842
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import (QWidget, QMainWindow, QToolTip, QPushButton, QApplication, QMessageBox, QFrame, QDesktopWidget)
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtWidgets import (QPushButton, QMessageBox, QFrame)
 import image_import
-import db_test_input_output
+import db_interface
 import validator
-import string
 import pickle
 import numpy as np
-import cerberus
-import datetime
 import os
 
 face_encoding = np.array([1])
@@ -131,7 +124,6 @@ class UISearchUser(object):
         self.label_no_result.setGeometry(QtCore.QRect(145, 56, 111, 31))
         self.label_no_result.setObjectName("label_no_result")
         self.label_no_result.setFrameShape(QFrame.Panel)
-       # self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_no_result)
         self.label_no_result.hide()
 
         self.btn_search = QtWidgets.QPushButton(self.centralwidget)
@@ -160,15 +152,28 @@ class UISearchUser(object):
         self.btn_save_user.clicked.connect(self.user_save)
         self.btn_save_user.hide()
 
+        self.label_user_updated = QtWidgets.QLabel(self.centralwidget)
+        self.label_user_updated.setGeometry(QtCore.QRect(250, 300, 220, 27))
+        self.label_user_updated.setObjectName("label_no_result")
+        self.label_user_updated.setFrameShape(QFrame.Panel)
+        self.label_user_updated.hide()
+
         self.btn_delete_user = QPushButton('Delete User', self.centralwidget)
-        self.btn_delete_user.setGeometry(QtCore.QRect(250, 140, 261, 27))
+        self.btn_delete_user.setGeometry(QtCore.QRect(145, 300, 125, 27))
         self.btn_delete_user.setObjectName("btn_delete_user")
         self.btn_delete_user.clicked.connect(self.user_del)
         self.btn_delete_user.hide()
 
+        self.label_user_deleted = QtWidgets.QLabel(self.centralwidget)
+        self.label_user_deleted.setGeometry(QtCore.QRect(145, 270, 275, 27))
+        self.label_user_deleted.setObjectName("label_no_result")
+        self.label_user_deleted.setFrameShape(QFrame.Panel)
+        self.label_user_deleted.hide()
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.mw = MainWindow
 
     def retranslateUi(self, MainWindow):
         # TODO Comment Code
@@ -176,6 +181,9 @@ class UISearchUser(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "User Search"))
         self.title.setText(_translate("MainWindow", "Search User"))
         self.label_fname.setText(_translate("MainWindow", "First Name : "))
+
+        self.fname_lineEdit.setText(_translate("MainWindow", "Paul"))
+
         self.label_lname.setText(_translate("MainWindow", "Last Name : "))
         self.label_no_result.setText(_translate("MainWindow", "No User Found !!"))
         self.btn_search.setText(_translate("MainWindow", "Search"))
@@ -189,13 +197,15 @@ class UISearchUser(object):
         self.face_capture_pushButton.setText(_translate("MainWindow", "Capture "))
         self.label_face_captured.setText(_translate("MainWindow", "Image Captured : "))
 
-        # self.label_id.setText(_translate("MainWindow", "User Id: "))
-        # self.id_lineEdit.setText(_translate("MainWindow", "1"))
+        self.btn_delete_user.setText(_translate("MainWindow", "Delete User"))
+
+        self.label_user_updated.setText(_translate("MainWindow", "User Info Successfully Updated"))
+        self.label_user_deleted.setText(_translate("MainWindow", "User Successfully Deleted"))
 
     def search_db(self):
         print("DB Search")
         global user_id
-        db_record = db_test_input_output.db_search(self.fname_lineEdit.text(), self.lname_lineEdit.text())
+        db_record = db_interface.db_search(self.fname_lineEdit.text(), self.lname_lineEdit.text())
 
         if len(db_record) < 1:
             self.label_sname.hide()
@@ -203,29 +213,11 @@ class UISearchUser(object):
             self.label_no_result.show()
 
             self.label_fname.setText("First Name :")
-            self.fname_lineEdit.setText("")
+            self.fname_lineEdit.setText(self.fname_lineEdit.text())
             self.label_lname.setText("Last Name : ")
-            self.lname_lineEdit.setText("")
+            self.lname_lineEdit.setText(self.lname_lineEdit.text())
             self.fname_lineEdit.setReadOnly(False)
             self.lname_lineEdit.setReadOnly(False)
-            self.dob_dateEdit.hide()
-            self.label_dob.hide()
-
-            self.label_dept.hide()
-            self.dept_lineEdit.hide()
-
-            self.label_authority.hide()
-            self.authority_spinBox.hide()
-
-            self.label_face_captured.hide()
-            self.face_capture_pushButton.hide()
-            self.check_box.hide()
-
-            self.btn_edit_user.hide()
-
-            self.btn_search.show()
-            self.btn_cancel.show()
-            self.btn_reset.hide()
 
         else:
             self.label_no_result.hide()
@@ -242,24 +234,7 @@ class UISearchUser(object):
             self.label_authority.show()
             self.authority_spinBox.show()
 
-            self.btn_search.hide() # setGeometry(QtCore.QRect(145, 270, 275, 27))
-            self.btn_edit_user.show()
-            self.btn_cancel.setGeometry(QtCore.QRect(440, 270, 125, 27))
-
-            self.fname_lineEdit.setReadOnly(True)
-            self.lname_lineEdit.setReadOnly(True)
-            self.sname_lineEdit.setReadOnly(True)
-            self.dob_dateEdit.setReadOnly(True)
-            self.dept_lineEdit.setReadOnly(True)
-            self.authority_spinBox.setReadOnly(True)
-
-            self.label_face_captured.show()
-            self.check_box.show()
-            self.check_box.setEnabled(True)
-            self.check_box.setChecked(True)
-
-            self.btn_cancel.hide()
-            self.btn_reset.show()
+            self.user_info()
 
             for row in db_record:
                 user_id = row[0]
@@ -285,10 +260,14 @@ class UISearchUser(object):
         self.face_capture_pushButton.show()
         self.btn_edit_user.hide()
         self.btn_save_user.show()
+        self.label_user_updated.hide()
+        self.btn_delete_user.show()
 
         global face_encoding
+        global user_id
+        print("User_edit user id =============== ", user_id)
 
-        directory_in_str = "/home/paul/sdp/pickle_folder/user_{}.pickle".format('1')
+        directory_in_str = "/home/paul/sdp/pickle_folder/user_{}.pickle".format(user_id)
         pickle_in = open(directory_in_str, "rb")
         loaded_person = pickle.load(pickle_in)
         face_encoding = (loaded_person[2])
@@ -332,7 +311,7 @@ class UISearchUser(object):
             access = self.authority_spinBox.value()
 
             # Pass user info to script to insert into DB and return the new user's ID number
-            db_test_input_output.db_update(user_id, fname, sname, dob, dept, access)
+            db_interface.db_update(user_id, fname, sname, dob, dept, access)
 
             if new_capture:
                 print("New Face Encoding")
@@ -349,16 +328,62 @@ class UISearchUser(object):
             else:
                 print("NO New face encoding")
 
+            self.user_info()
+            self.label_user_updated.show()
 
         else:
             QtWidgets.QMessageBox.information(QtWidgets.QMainWindow(), 'Message', 'Form Not Complete',
                                               QMessageBox.Ok)
 
-
-
     def user_del(self):
-        print("Delete User 0000000000")
-        # os.remove('/home/paul/sdp/pickle_folder/user_4.pickle')
 
-    def search_reset(self):
-        print("Search Reset")
+        reply = QMessageBox.question(self.mw, 'Delete User',
+                                     "Are you sure you wish to delete this user?", QMessageBox.Yes |
+                                     QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            self.confirm_user_del()
+
+    def confirm_user_del(self):
+        print("Delete User Confirmed")
+        os.remove('/home/paul/sdp/pickle_folder/user_{}.pickle'.format(user_id))
+        db_interface.db_user_delete(user_id)
+
+        self.fname_lineEdit.setReadOnly(True)
+        self.lname_lineEdit.setReadOnly(True)
+        self.sname_lineEdit.setReadOnly(True)
+        self.dob_dateEdit.setReadOnly(True)
+        self.dept_lineEdit.setReadOnly(True)
+        self.authority_spinBox.setReadOnly(True)
+
+        self.face_capture_pushButton.hide()
+        self.label_face_captured.hide()
+        self.check_box.hide()
+
+        self.label_user_deleted.show()
+        self.btn_save_user.hide()
+        self.btn_delete_user.hide()
+
+    def user_info(self):
+        """This is a docstring"""
+        self.title.setText("User Info")
+        self.fname_lineEdit.setReadOnly(True)
+        self.lname_lineEdit.setReadOnly(True)
+        self.sname_lineEdit.setReadOnly(True)
+        self.dob_dateEdit.setReadOnly(True)
+        self.dept_lineEdit.setReadOnly(True)
+        self.authority_spinBox.setReadOnly(True)
+
+        self.label_face_captured.show()
+        self.check_box.show()
+        self.check_box.setEnabled(True)
+        self.check_box.setChecked(True)
+
+        self.face_capture_pushButton.hide()
+        self.btn_save_user.hide()
+        self.btn_edit_user.show()
+
+        self.btn_search.hide()
+        self.btn_cancel.hide()
+        self.btn_reset.show()
+        self.btn_delete_user.hide()

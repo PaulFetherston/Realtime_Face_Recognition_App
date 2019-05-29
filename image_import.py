@@ -1,9 +1,11 @@
+
+# Paul Fetherston
+#
+# Student No: 2898842
+
 import face_recognition
 import cv2
 import numpy as np
-
-# TODO Tidy up the displayed details
-# TODO Debug
 
 
 def add_user():

@@ -1,3 +1,9 @@
+
+# Paul Fetherston
+#
+# Student No: 2898842
+
+
 import mysql.connector
 from mysql.connector import Error
 
@@ -147,3 +153,34 @@ def db_update(usr_id, fname, sname, dob, dept, access):
         if connection.is_connected():
             connection.close()
             print("MySQL is closed")
+
+
+def db_user_delete(usr_id):
+    connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
+    try:
+        print("Delete User database:")
+
+        sql_delete_query = """DELETE FROM sdptest WHERE id="%i";""" % usr_id
+
+        if connection.is_connected():
+            db_info = connection.get_server_info()
+            print("Connected to mysql database... MySQL Server version on ", db_info)
+
+            cursor = connection.cursor()
+            cursor.execute(sql_delete_query)
+            connection.commit()
+
+            print("Record deleted from table")
+
+            cursor.close()
+
+    except Error as e:
+        connection.rollback()  # rollback if any exceptions
+        print("Error while connecting to MYSQL ", e)
+
+    finally:
+        # Closing connection to db
+        if connection.is_connected():
+            connection.close()
+            print("MySQL is closed")
+

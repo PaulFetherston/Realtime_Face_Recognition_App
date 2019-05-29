@@ -1,10 +1,15 @@
+
+# Paul Fetherston
+#
+# Student No: 2898842
+
 import face_recognition
 import cv2
 import dlib.cuda as cuda
 import dlib
 import pickle
 from pathlib import Path
-import db_test_input_output
+import db_interface
 
 print("Number of devices found = ", cuda.get_num_devices())
 
@@ -14,13 +19,10 @@ print("Is dlib use cuda = ", dlib.DLIB_USE_CUDA)
 directory_in_str = "/home/paul/sdp/pickle_folder"
 
 # Initialize some variables
-# face_locations = []
-# face_encodings = []
-# face_names = []
 process_this_frame = True
-
 known_face_encodings = []
 known_face_names = []
+users_onsite = []
 
 
 def run_face():
@@ -33,7 +35,7 @@ def run_face():
         loaded_person = pickle.load(pickle_in)
         known_face_encodings.append(loaded_person[2])
 
-    records = db_test_input_output.db_retrieve()
+    records = db_interface.db_retrieve()
 
     for row in records:
         known_face_names.append(row[1])
@@ -83,19 +85,30 @@ def run_face():
             bottom *= 4
             left *= 4
 
-            # Draw a box around the face
-            cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+            if name == 'Unknown':
+                # Draw a box around the face
+                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
-            # Draw a label with a name below the face
-            cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
-            font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
+                # Draw a label with a name below the face
+                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
+            else:
+                # Draw a box around the face
+                cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+
+                # Draw a label with a name below the face
+                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (0, 0, 0), 1)
 
         # Display the resulting image
         cv2.imshow('Face Recognition', frame)
 
-        # Hit 'q' on the keyboard to quit!
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        k = cv2.waitKey(1)
+
+        # Hit Esc on the keyboard to quit!
+        if k%256 == 27:
             break
 
     # Release handle to the webcam
