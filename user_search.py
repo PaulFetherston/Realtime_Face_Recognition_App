@@ -37,10 +37,10 @@ class UISearchUser(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.verticalLayout_2.addWidget(self.title)
 
-        self.centralwidget.setStyleSheet(
-            "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(255, 0, 0); ")
-        self.verticalLayoutWidget.setStyleSheet(
-            "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(0, 255, 0); ")
+        # self.centralwidget.setStyleSheet(
+        #   "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(255, 0, 0); ")
+        # self.verticalLayoutWidget.setStyleSheet(
+        #    "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(0, 255, 0); ")
 
         self.formLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.formLayoutWidget.setGeometry(QtCore.QRect(130, 50, 451, 200))
@@ -52,8 +52,8 @@ class UISearchUser(object):
         self.formLayout.setVerticalSpacing(4)
         self.formLayout.setObjectName("formLayout")
 
-        self.formLayoutWidget.setStyleSheet(
-            "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(0, 0, 255); ")
+        # self.formLayoutWidget.setStyleSheet(
+        #     "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(0, 0, 255); ")
 
         self.label_fname = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_fname.setObjectName("label_fname")

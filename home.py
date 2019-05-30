@@ -6,6 +6,9 @@
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import (QWidget, QMainWindow, QPushButton, QMessageBox)
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import add_user
 import user_search
 import live_system
@@ -37,6 +40,9 @@ class UIWindow(object):
 
 
 class MainWindow(QMainWindow):
+    # Added a signal
+    changedValue = pyqtSignal(int)
+
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.uiWindow = UIWindow()
@@ -69,13 +75,18 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
     def realtime_face_recognition(self):
-        print('Face Recognition')
         self.startLiveSystem()
-        realtime_face_recognition.run_face()
+        # realtime_face_recognition.run_face()
+        self.on_changed_value(75)
 
     def end_realtime_face_recognition(self):
-        realtime_face_recognition.end_capture()
+        # realtime_face_recognition.end_capture()
         self.startUIWindow()
+
+    def on_changed_value(self, value):
+        print('Home ********** on_changed_value : ', value)
+        self.changedValue.emit(value)
+
 
     # Confirm close window
     def closeEvent(self, event):
@@ -85,6 +96,7 @@ class MainWindow(QMainWindow):
                                      QMessageBox.No, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
+            self.end_realtime_face_recognition()
             event.accept()
         else:
             event.ignore()

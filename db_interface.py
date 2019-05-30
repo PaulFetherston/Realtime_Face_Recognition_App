@@ -10,6 +10,7 @@ from mysql.connector import Error
 
 def db_retrieve():
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
+    records = 0
     try:
         print("Retrieve data:")
 
@@ -42,6 +43,7 @@ def db_retrieve():
 
 def db_insert(fname, sname, dob, dept, access):
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
+    new_user_id = 0
     try:
         print("Insert database:")
 
@@ -63,7 +65,7 @@ def db_insert(fname, sname, dob, dept, access):
             print("Total number of rows ************ = ", cursor.rowcount)
             for row in records:
                 print("Id =========== ", row[0])
-                id = row[0]
+                new_user_id = row[0]
 
             print("Record inserted into table")
 
@@ -78,11 +80,12 @@ def db_insert(fname, sname, dob, dept, access):
         if connection.is_connected():
             connection.close()
             print("MySQL is closed")
-            return id
+            return new_user_id
 
 
 def db_search(fname, sname):
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
+    records = 0
     try:
         print("Search database:")
 
@@ -106,9 +109,40 @@ def db_search(fname, sname):
                 print("dept =========== ", row[4])
                 print("Access =========== ", row[5])
 
-
-
             print("Searched Records")
+
+            cursor.close()
+
+    except Error as e:
+        connection.rollback()  # rollback if any exceptions
+        print("Error while connecting to MYSQL ", e)
+
+    finally:
+        # Closing connection to db
+        if connection.is_connected():
+            connection.close()
+            print("MySQL is closed")
+            return records
+
+
+def db_id_search(user_id):
+    connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
+    records = 0
+    try:
+        print("Search database:")
+
+        sql_search_query = """SELECT id, fname, sname, dept FROM sdptest WHERE id="%i";
+                            """ % user_id
+
+        if connection.is_connected():
+            db_info = connection.get_server_info()
+            print("Connected to mysql database... MySQL Server version on ", db_info)
+
+            cursor = connection.cursor()
+            cursor.execute(sql_search_query)
+            records = cursor.fetchall()
+
+            print("Searched user id Records")
 
             cursor.close()
 
