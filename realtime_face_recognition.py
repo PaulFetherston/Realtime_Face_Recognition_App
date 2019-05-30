@@ -24,10 +24,15 @@ process_this_frame = True
 known_face_encodings = []
 known_face_names = []
 users_authority = []
-
+video_capture = 0
+video_run = True
 
 def run_face():
     path_list = Path(directory_in_str).glob('**/*.pickle')
+
+    global video_capture
+    global video_run
+    video_run = True
 
     for path in path_list:
         # because path is object not string
@@ -55,7 +60,7 @@ def run_face():
     w = int(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
     h = int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    while True:
+    while video_run:
         # Grab a single frame of video
         ret, frame = video_capture.read()
 
@@ -135,6 +140,17 @@ def run_face():
         if k%256 == 27:
             break
 
+    end_capture()
+    # # Release handle to the webcam
+    # video_capture.release()
+    # cv2.destroyAllWindows()
+
+
+def end_capture():
+    global video_capture
+    global video_run
+
+    video_run = False
     # Release handle to the webcam
     video_capture.release()
     cv2.destroyAllWindows()
@@ -144,5 +160,7 @@ def mid_point(x1, x2):
     temp = x1+x2
 
     return temp/2
+
+
 
 

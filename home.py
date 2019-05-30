@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
 
     def startLiveSystem(self):
         self.uiLiveSystem.setupUI(self)
-        self.uiLiveSystem.CPSBTN.clicked.connect(self.startUIWindow)
+        self.uiLiveSystem.close.clicked.connect(self.end_realtime_face_recognition)
         self.showMaximized()
 
     def startUIWindow(self):
@@ -72,6 +72,10 @@ class MainWindow(QMainWindow):
         print('Face Recognition')
         self.startLiveSystem()
         realtime_face_recognition.run_face()
+
+    def end_realtime_face_recognition(self):
+        realtime_face_recognition.end_capture()
+        self.startUIWindow()
 
     # Confirm close window
     def closeEvent(self, event):

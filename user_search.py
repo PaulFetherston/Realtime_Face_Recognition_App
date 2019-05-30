@@ -22,18 +22,25 @@ class UISearchUser(object):
     def setupUI(self, MainWindow):
         MainWindow.setWindowTitle("Search User")
         MainWindow.setObjectName("MainWindow")
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(300, 10, 111, 31))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.title = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.title.setObjectName("title")
 
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.title = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.title.setObjectName("title")
         self.verticalLayout_2.addWidget(self.title)
+
+        self.centralwidget.setStyleSheet(
+            "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(255, 0, 0); ")
+        self.verticalLayoutWidget.setStyleSheet(
+            "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(0, 255, 0); ")
 
         self.formLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.formLayoutWidget.setGeometry(QtCore.QRect(130, 50, 451, 200))
@@ -44,6 +51,9 @@ class UISearchUser(object):
         self.formLayout.setContentsMargins(15, 0, 15, 0)
         self.formLayout.setVerticalSpacing(4)
         self.formLayout.setObjectName("formLayout")
+
+        self.formLayoutWidget.setStyleSheet(
+            "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(0, 0, 255); ")
 
         self.label_fname = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_fname.setObjectName("label_fname")
