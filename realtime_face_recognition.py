@@ -111,6 +111,8 @@ class LiveVideo(QObject):
                     access = 0
                     id_usr = 0
 
+
+
                     # If a match was found in known_face_encodings, just use the first one.
                     if True in matches:
                         first_match_index = matches.index(True)
