@@ -13,12 +13,16 @@ from PyQt5.QtWidgets import *
 
 import image_import
 import db_interface
+import datetime
 import validator
 import pickle
 import numpy as np
 import os
 
 row_count = 0
+user_id = []
+unauthorised_user = []
+unknown_person = []
 
 
 class UILiveSystem(object):
@@ -56,11 +60,11 @@ class UILiveSystem(object):
         # print("WWWWWWWWWWWWWWDDDDDDDDDDDDDDDDDDDDD : ", numRows)
 
         self.createTable2()
-        self.tableWidget2.setHorizontalHeaderLabels(["Time", "Name", "Dept."])
+        self.tableWidget2.setHorizontalHeaderLabels(["Time", "Location", "Unknown Person"])
         self.tableWidget2.resizeColumnsToContents()
 
         self.createTable3()
-        self.tableWidget3.setHorizontalHeaderLabels(["Time", "Name", "Dept."])
+        self.tableWidget3.setHorizontalHeaderLabels(["Time", "User ID", "Name", "Dept."])
         self.tableWidget3.resizeColumnsToContents()
 
         l_a1 = QtWidgets.QLabel('People on site')
@@ -75,7 +79,7 @@ class UILiveSystem(object):
         a_b.addWidget(l_a2)
         a_b.addWidget(self.tableWidget2)
 
-        l_a3 = QtWidgets.QLabel('A')
+        l_a3 = QtWidgets.QLabel('Unauthorised Access')
         a_b_c = QVBoxLayout()
         a_b_c.setContentsMargins(5, 5, 5, 5)
         a_b_c.addWidget(l_a3)
@@ -122,17 +126,8 @@ class UILiveSystem(object):
         self.tableWidget1.setWindowTitle("First Table")
         self.tableWidget1.setContentsMargins(10, 10, 10, 10)
         self.tableWidget1.setMaximumWidth(400)
-        self.tableWidget1.setRowCount(4)
+        self.tableWidget1.setRowCount(0)
         self.tableWidget1.setColumnCount(3)
-        self.tableWidget1.setItem(0, 0, QTableWidgetItem("5555555  Cell (1,1)"))
-        self.tableWidget1.setItem(0, 1, QTableWidgetItem("Cell (1,2)"))
-        self.tableWidget1.setItem(0, 2, QTableWidgetItem("Cell (1,3)"))
-        self.tableWidget1.setItem(1, 0, QTableWidgetItem("Cell (2,1)"))
-        self.tableWidget1.setItem(1, 1, QTableWidgetItem("Cell (2,2)"))
-        self.tableWidget1.setItem(2, 0, QTableWidgetItem("Cell (3,1)"))
-        self.tableWidget1.setItem(2, 1, QTableWidgetItem("Cell (3,2)"))
-        self.tableWidget1.setItem(3, 0, QTableWidgetItem("Cell (4,1)"))
-        self.tableWidget1.setItem(3, 1, QTableWidgetItem("Cell (4,2)"))
         self.tableWidget1.move(0, 0)
 
         # table selection change
@@ -141,19 +136,11 @@ class UILiveSystem(object):
     def createTable2(self):
         # Create table
         self.tableWidget2 = QTableWidget()
-        self.tableWidget2.setWindowTitle("First Table")
+        self.tableWidget2.setWindowTitle("Second Table")
         self.tableWidget2.setContentsMargins(10, 10, 10, 10)
         self.tableWidget2.setMaximumWidth(400)
-        self.tableWidget2.setRowCount(4)
+        self.tableWidget2.setRowCount(0)
         self.tableWidget2.setColumnCount(3)
-        self.tableWidget2.setItem(0, 0, QTableWidgetItem("kkkk (1,1)"))
-        self.tableWidget2.setItem(0, 1, QTableWidgetItem("Cell (1,2)"))
-        self.tableWidget2.setItem(1, 0, QTableWidgetItem("Cell (2,1)"))
-        self.tableWidget2.setItem(1, 1, QTableWidgetItem("Cell (2,2)"))
-        self.tableWidget2.setItem(2, 0, QTableWidgetItem("Cell (3,1)"))
-        self.tableWidget2.setItem(2, 1, QTableWidgetItem("Cell (3,2)"))
-        self.tableWidget2.setItem(3, 0, QTableWidgetItem("Cell (4,1)"))
-        self.tableWidget2.setItem(3, 1, QTableWidgetItem("Cell (4,2)"))
         self.tableWidget2.move(0, 0)
 
         # table selection change
@@ -162,19 +149,11 @@ class UILiveSystem(object):
     def createTable3(self):
         # Create table
         self.tableWidget3 = QTableWidget()
-        self.tableWidget3.setWindowTitle("First Table")
+        self.tableWidget3.setWindowTitle("Third Table")
         self.tableWidget3.setContentsMargins(10, 10, 10, 10)
         self.tableWidget3.setMaximumWidth(400)
-        self.tableWidget3.setRowCount(4)
-        self.tableWidget3.setColumnCount(3)
-        self.tableWidget3.setItem(0, 0, QTableWidgetItem("kkkk (1,1)"))
-        self.tableWidget3.setItem(0, 1, QTableWidgetItem("Cell (1,2)"))
-        self.tableWidget3.setItem(1, 0, QTableWidgetItem("Cell (2,1)"))
-        self.tableWidget3.setItem(1, 1, QTableWidgetItem("Cell (2,2)"))
-        self.tableWidget3.setItem(2, 0, QTableWidgetItem("Cell (3,1)"))
-        self.tableWidget3.setItem(2, 1, QTableWidgetItem("Cell (3,2)"))
-        self.tableWidget3.setItem(3, 0, QTableWidgetItem("Cell (4,1)"))
-        self.tableWidget3.setItem(3, 1, QTableWidgetItem("Cell (4,2)"))
+        self.tableWidget3.setRowCount(0)
+        self.tableWidget3.setColumnCount(4)
         self.tableWidget3.move(0, 0)
 
         # table selection change
@@ -185,15 +164,15 @@ class UILiveSystem(object):
         for currentQTableWidgetItem in self.tableWidget1.selectedItems():
             print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())
 
-    def insert_tb1(self):
-        time = '30/05/2019 19:15'
-        id_usr = 1
+    def insert_tb1(self, id_usr):
         print("Inserting into Table 1 user id = ", id_usr)
-        user_id = []
+        now = datetime.datetime.now()
+
+        global user_id
 
         if id_usr not in user_id:
             print("User id = ", id_usr)
-            print("TimeDate = ", time)
+            print("TimeDate = ", now)
             user_id.append(id_usr)
 
             print(user_id)
@@ -201,21 +180,86 @@ class UILiveSystem(object):
             # Get user info from db
             user_record = db_interface.db_id_search(id_usr)
 
-            y = 'Unknown'
-            z = 'unknown'
+            name = 'Unknown'
+            dept = 'unknown'
 
             for row in user_record:
-                y = row[1]
-                z = row[3]
+                name = '{} {}'.format(row[1], row[2])
+                dept = row[3]
 
             # Create a empty row at bottom of table
             numRows = self.tableWidget1.rowCount()
             self.tableWidget1.insertRow(numRows)
 
             # Add text to the row
-            self.tableWidget1.setItem(numRows, 0, QtWidgets.QTableWidgetItem(time))
-            self.tableWidget1.setItem(numRows, 1, QtWidgets.QTableWidgetItem(y))
-            self.tableWidget1.setItem(numRows, 2, QtWidgets.QTableWidgetItem(z))
+            self.tableWidget1.setItem(numRows, 0, QtWidgets.QTableWidgetItem(now.strftime("%Y-%m-%d %H:%M")))
+            self.tableWidget1.setItem(numRows, 1, QtWidgets.QTableWidgetItem(name))
+            self.tableWidget1.setItem(numRows, 2, QtWidgets.QTableWidgetItem(dept))
+            self.tableWidget1.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
+            self.tableWidget1.resizeColumnsToContents()
+
+    def insert_tb2(self, unknown_name, loc):
+        print("Inserting into Table 1 user id = ", unknown_name)
+        now = datetime.datetime.now()
+
+        name_loc = '{} - {}'.format(unknown_name, loc)
+
+        global unknown_person
+
+        if name_loc not in unknown_person:
+
+            # Create a empty row at bottom of table
+            numRows = self.tableWidget2.rowCount()
+            self.tableWidget2.insertRow(numRows)
+
+            # Add text to the row
+            self.tableWidget2.setItem(numRows, 0, QtWidgets.QTableWidgetItem(now.strftime("%Y-%m-%d %H:%M")))
+            self.tableWidget2.setItem(numRows, 1, QtWidgets.QTableWidgetItem(loc))
+            self.tableWidget2.setItem(numRows, 2, QtWidgets.QTableWidgetItem(unknown_name))
+            self.tableWidget2.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
+            self.tableWidget2.resizeColumnsToContents()
+
+    def insert_tb3(self, id_usr):
+        print("Inserting into Table 3 user id = ", id_usr)
+        now = datetime.datetime.now()
+
+        global user_id
+        global unauthorised_user
+
+        if id_usr not in unauthorised_user:
+            print("User id = ", id_usr)
+            print("TimeDate = ", now)
+            unauthorised_user.append(id_usr)
+
+            if id_usr not in user_id:
+                self.insert_tb1(id_usr)
+
+            print(user_id)
+
+            # Get user info from db
+            user_record = db_interface.db_id_search(id_usr)
+
+            name = 'Unknown'
+            dept = 'unknown'
+            usr_id = 'Unknown'
+
+            for row in user_record:
+                usr_id = str(row[0])
+                name = '{} {}'.format(row[1], row[2])
+                dept = row[3]
+
+            # Create a empty row at bottom of table
+            numRows = self.tableWidget3.rowCount()
+            self.tableWidget3.insertRow(numRows)
+
+            # Add text to the row
+            self.tableWidget3.setItem(numRows, 0, QtWidgets.QTableWidgetItem(now.strftime("%Y-%m-%d %H:%M")))
+            self.tableWidget3.setItem(numRows, 1, QtWidgets.QTableWidgetItem(usr_id))
+            self.tableWidget3.setItem(numRows, 2, QtWidgets.QTableWidgetItem(name))
+            self.tableWidget3.setItem(numRows, 3, QtWidgets.QTableWidgetItem(dept))
+            self.tableWidget3.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
+            self.tableWidget3.resizeColumnsToContents()
+
 
     def make_connection(self, slider_object):
         print("Live_System 55555555555555 make_connection : ", slider_object)
@@ -227,11 +271,11 @@ class UILiveSystem(object):
     def get_slider_value(self, val):
         print("HERE IS THE VALUE 55555555555555 = ", val)
 
+    def reset_tables(self):
+        global user_id
+        global unauthorised_user
+        global unknown_person
 
-def inset_info():
-    print("iset_infoooooooooooojjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
-
-    t = UILiveSystem()
-
-    # UILiveSystem.insert_tb1(t)
-    t.insert_tb1()
+        user_id = []
+        unauthorised_user = []
+        unknown_person = []

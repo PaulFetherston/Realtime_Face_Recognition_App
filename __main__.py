@@ -2,6 +2,10 @@
 # Paul Fetherston
 #
 # Student No: 2898842
+#
+# BSCH 4th year development project
+#
+# 31/05/2019
 
 
 from PyQt5.QtWidgets import QApplication
@@ -11,19 +15,11 @@ from live_system import UILiveSystem
 import sys
 
 app = QApplication([])
-
 lv = LiveVideo()
-
 ui = UILiveSystem()
-
 w = MainWindow()
 
 ui.make_connection(lv)
-
-# lv.make_connection(ui)
-
 lv.make_connection(w)
-
-
-
+w.make_connection(lv)
 sys.exit(app.exec_())

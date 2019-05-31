@@ -33,10 +33,20 @@ user_id = []
 video_capture = 0
 video_run = True
 
+unknown_face_encodings = []
+unknown_names = []
+
+flag_1 = 1
+flag_2 = 2
+flag_3 = 3
+
+loc = 0
+unknown_name = ''
+
 
 class LiveVideo(QObject):
 
-    changedValue = pyqtSignal(int)
+    newValue = pyqtSignal(int, int, int, str)
 
     def __init__(self):
         # Initialize the PunchingBag as a QObject
@@ -130,9 +140,8 @@ class LiveVideo(QObject):
                     font = cv2.FONT_HERSHEY_DUPLEX
                     cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (0, 0, 0), 1)
 
-                    # Send user id to live_system
-                    # live_system.inset_info()
-                    self.on_changed_value(12)
+                    # Send user info to live_system for table1
+                    self.on_changed_value(flag_1, id_usr, loc, name)
 
                 if mid > (w*0.5) and access < 2:
                     # Draw a Blue box around the face
@@ -143,6 +152,9 @@ class LiveVideo(QObject):
                     font = cv2.FONT_HERSHEY_DUPLEX
                     cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (0, 0, 0), 1)
 
+                    # Send user info to live_system for table 3
+                    self.on_changed_value(flag_3, id_usr, loc, name)
+
                 if access < 1:
                     # Draw a Red box around the face
                     cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
@@ -151,6 +163,9 @@ class LiveVideo(QObject):
                     cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
                     font = cv2.FONT_HERSHEY_DUPLEX
                     cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
+
+                    # Send user info to live_system for table 3
+                    self.on_changed_value(flag_2, id_usr, loc, name)
 
             cv2.line(frame, (int(w*0.5), 0), (int(w*0.5), int(h)), (0, 255, 0), 2)
 
@@ -168,9 +183,9 @@ class LiveVideo(QObject):
         # video_capture.release()
         # cv2.destroyAllWindows()
 
-    def on_changed_value(self, value):
-        print("Realtime_face +++++++++++++ on_changed_value : ", value)
-        self.changedValue.emit(value)
+    def on_changed_value(self, flag, usr_id, loc, name):
+        print("Realtime_face +++++++++++++ on_changed_value : ", name)
+        self.newValue.emit(flag, usr_id, loc, name)
 
 
     def make_connection(self, slider_object):
@@ -180,7 +195,10 @@ class LiveVideo(QObject):
     @pyqtSlot(int)
     def get_slider_value(self, val):
         print("Realtime_face ++++++++++++++++ get_slider_value : ", val)
-        self.run_face()
+        if val == 1:
+            self.run_face()
+        if val == 2:
+            self.end_capture()
 
 
     @staticmethod
