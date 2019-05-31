@@ -110,18 +110,18 @@ class MainWindow(QMainWindow):
         self.uiLiveSystem.reset_tables()
 
     def make_connection(self, slider_object):
-        print("Realtime_face +++++++++++++ Make_connection : ", slider_object)
+        # print("Realtime_face +++++++++++++ Make_connection : ", slider_object)
         slider_object.newValue.connect(self.get_slider_value)
 
     @pyqtSlot(int, int, int, str)
     def get_slider_value(self, flag, usr_id, loc, name):
-        print("Realtime_face ++++++++++++++++ HOME get_slider_value : ", name)
+        # print("Realtime_face ++++++++++++++++ HOME get_slider_value : ", name)
         if flag == 1:
             self.uiLiveSystem.insert_tb1(usr_id)
         if flag == 2:
             self.uiLiveSystem.insert_tb2(name, loc)
         if flag == 3:
-            self.uiLiveSystem.insert_tb3(usr_id)
+            self.uiLiveSystem.insert_tb3(usr_id, name)
 
 
     def on_changed_value(self, value):

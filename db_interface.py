@@ -135,8 +135,6 @@ def db_id_search(user_id):
                             """ % user_id
 
         if connection.is_connected():
-            db_info = connection.get_server_info()
-            print("Connected to mysql database... MySQL Server version on ", db_info)
 
             cursor = connection.cursor()
             cursor.execute(sql_search_query)

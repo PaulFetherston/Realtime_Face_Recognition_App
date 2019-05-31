@@ -35,13 +35,12 @@ video_run = True
 
 unknown_face_encodings = []
 unknown_names = []
+unknown_user_count = 0
+unknown_user_name = ''
 
 flag_1 = 1
 flag_2 = 2
 flag_3 = 3
-
-loc = 0
-unknown_name = ''
 
 
 class LiveVideo(QObject):
@@ -57,6 +56,8 @@ class LiveVideo(QObject):
 
         global video_capture
         global video_run
+        global unknown_face_encodings
+        global unknown_user_count
         video_run = True
         id_usr = 0
         access = 0
@@ -107,19 +108,43 @@ class LiveVideo(QObject):
                 for face_encoding in face_encodings:
                     # See if the face is a match for the known face(s)
                     matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+                    unknown_matches = face_recognition.compare_faces(unknown_face_encodings, face_encoding)
                     name = "Unknown"
                     access = 0
                     id_usr = 0
+                    loc = 0
 
+
+                    # if len(unknown_face_encodings) < 1 and not any(matches):
+                    #     print("This is 11111111111111111111111111111111111111111111111111111111111111")
+                    #     unknown_face_encodings.append(face_encoding)
+                    #     unknown_user_count += 1
+                    #     name = "{} - {}".format(name, unknown_user_count)
+                    #     unknown_names.append(name)
+
+                    if not any(matches) and not any(unknown_matches):
+                        print("This 888888888888888888888888888888888888888888888888888888888888888888888")
+                        unknown_face_encodings.append(face_encoding)
+                        unknown_user_count += 1
+                        name = "{} - {}".format(name, unknown_user_count)
+                        unknown_names.append(name)
 
 
                     # If a match was found in known_face_encodings, just use the first one.
                     if True in matches:
+                        print("This is 2222222222222222222222222222222222222222222222222222222222222222")
                         first_match_index = matches.index(True)
-                        #print("True in matches index location", first_match_index)
+                        # print("True in matches index location", first_match_index)
                         name = known_face_names[first_match_index]
                         access = users_authority[first_match_index]
                         id_usr = user_id[first_match_index]
+
+
+                    if True in unknown_matches:
+                        print("This is 3333333333333333333333333333333333333333333333333333333333333333333")
+                        first_unknown_match_index = unknown_matches.index(True)
+                        name = unknown_names[first_unknown_match_index]
+
 
                     face_names.append(name)
 
@@ -142,6 +167,8 @@ class LiveVideo(QObject):
                     font = cv2.FONT_HERSHEY_DUPLEX
                     cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (0, 0, 0), 1)
 
+                    loc = 1 if mid < (w*0.5) else 2
+
                     # Send user info to live_system for table1
                     self.on_changed_value(flag_1, id_usr, loc, name)
 
@@ -154,6 +181,8 @@ class LiveVideo(QObject):
                     font = cv2.FONT_HERSHEY_DUPLEX
                     cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (0, 0, 0), 1)
 
+                    loc = 2
+
                     # Send user info to live_system for table 3
                     self.on_changed_value(flag_3, id_usr, loc, name)
 
@@ -165,6 +194,8 @@ class LiveVideo(QObject):
                     cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
                     font = cv2.FONT_HERSHEY_DUPLEX
                     cv2.putText(frame, name, (left + 6, bottom - 6), font, 0.5, (255, 255, 255), 1)
+
+                    loc = 1 if mid < (w * 0.5) else 2
 
                     # Send user info to live_system for table 3
                     self.on_changed_value(flag_2, id_usr, loc, name)
@@ -186,7 +217,11 @@ class LiveVideo(QObject):
         # cv2.destroyAllWindows()
 
     def on_changed_value(self, flag, usr_id, loc, name):
-        print("Realtime_face +++++++++++++ on_changed_value : ", name)
+        print("Realtime_face +++++++++++++ on_changed_value flag  : ", flag)
+        print("Realtime_face +++++++++++++ on_changed_value usr_id  : ", usr_id)
+        print("Realtime_face +++++++++++++ on_changed_value loc  : ", loc)
+        print("Realtime_face +++++++++++++ on_changed_value name  : ", name)
+
         self.newValue.emit(flag, usr_id, loc, name)
 
 

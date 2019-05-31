@@ -88,14 +88,9 @@ class UILiveSystem(object):
         self.close = QtWidgets.QPushButton('close')
         self.close.setObjectName("close")
 
-        self.test = QPushButton('test')
-        self.test.setObjectName("test")
-        self.test.clicked.connect(self.insert_tb1)
-
         a_b_c_d = QVBoxLayout()
         a_b_c_d.setContentsMargins(5, 5, 5, 5)
         a_b_c_d.addWidget(self.close)
-        a_b_c_d.addWidget(self.test)
 
         a.setAlignment(Qt.AlignTop)
         a_b.setAlignment(Qt.AlignTop)
@@ -175,7 +170,7 @@ class UILiveSystem(object):
             print("TimeDate = ", now)
             user_id.append(id_usr)
 
-            print(user_id)
+            print("Live System ttttttttttttttttttttttttttable 1 user_id", id_usr)
 
             # Get user info from db
             user_record = db_interface.db_id_search(id_usr)
@@ -197,16 +192,24 @@ class UILiveSystem(object):
             self.tableWidget1.setItem(numRows, 2, QtWidgets.QTableWidgetItem(dept))
             self.tableWidget1.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
             self.tableWidget1.resizeColumnsToContents()
+            self.tableWidget1.item(numRows, 2).setTextAlignment(Qt.AlignCenter)
 
     def insert_tb2(self, unknown_name, loc):
         print("Inserting into Table 1 user id = ", unknown_name)
+        print("Inserting into Table 1 loc = ", loc)
+
         now = datetime.datetime.now()
 
-        name_loc = '{} - {}'.format(unknown_name, loc)
+        name_loc = '{} - {}'.format(unknown_name, str(loc))
+
+        print("Inserting into Table 1 name_ loc = ", name_loc)
 
         global unknown_person
 
         if name_loc not in unknown_person:
+
+            unknown_person.append(name_loc)
+
 
             # Create a empty row at bottom of table
             numRows = self.tableWidget2.rowCount()
@@ -214,39 +217,33 @@ class UILiveSystem(object):
 
             # Add text to the row
             self.tableWidget2.setItem(numRows, 0, QtWidgets.QTableWidgetItem(now.strftime("%Y-%m-%d %H:%M")))
-            self.tableWidget2.setItem(numRows, 1, QtWidgets.QTableWidgetItem(loc))
+            self.tableWidget2.setItem(numRows, 1, QtWidgets.QTableWidgetItem(str(loc)))
             self.tableWidget2.setItem(numRows, 2, QtWidgets.QTableWidgetItem(unknown_name))
             self.tableWidget2.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
             self.tableWidget2.resizeColumnsToContents()
+            self.tableWidget2.item(numRows, 1).setTextAlignment(Qt.AlignCenter)
 
-    def insert_tb3(self, id_usr):
+    def insert_tb3(self, id_usr, name):
         print("Inserting into Table 3 user id = ", id_usr)
         now = datetime.datetime.now()
 
         global user_id
         global unauthorised_user
 
-        if id_usr not in unauthorised_user:
-            print("User id = ", id_usr)
-            print("TimeDate = ", now)
-            unauthorised_user.append(id_usr)
+        dept = '-'
+        usr_id = '-'
 
-            if id_usr not in user_id:
-                self.insert_tb1(id_usr)
+        # Get user info from db
+        user_record = db_interface.db_id_search(id_usr)
 
-            print(user_id)
-
-            # Get user info from db
-            user_record = db_interface.db_id_search(id_usr)
-
-            name = 'Unknown'
-            dept = 'unknown'
-            usr_id = 'Unknown'
-
+        if len(user_record) > 0:
             for row in user_record:
                 usr_id = str(row[0])
                 name = '{} {}'.format(row[1], row[2])
                 dept = row[3]
+
+        if name not in unauthorised_user:
+            unauthorised_user.append(name)
 
             # Create a empty row at bottom of table
             numRows = self.tableWidget3.rowCount()
@@ -254,11 +251,13 @@ class UILiveSystem(object):
 
             # Add text to the row
             self.tableWidget3.setItem(numRows, 0, QtWidgets.QTableWidgetItem(now.strftime("%Y-%m-%d %H:%M")))
-            self.tableWidget3.setItem(numRows, 1, QtWidgets.QTableWidgetItem(usr_id))
+            self.tableWidget3.setItem(numRows, 1, QtWidgets.QTableWidgetItem(str(usr_id)))
             self.tableWidget3.setItem(numRows, 2, QtWidgets.QTableWidgetItem(name))
             self.tableWidget3.setItem(numRows, 3, QtWidgets.QTableWidgetItem(dept))
             self.tableWidget3.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
             self.tableWidget3.resizeColumnsToContents()
+            self.tableWidget3.item(numRows, 1).setTextAlignment(Qt.AlignCenter)
+            self.tableWidget3.item(numRows, 3).setTextAlignment(Qt.AlignCenter)
 
 
     def make_connection(self, slider_object):
