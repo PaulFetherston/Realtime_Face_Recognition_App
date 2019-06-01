@@ -3,6 +3,10 @@
 # Paul Fetherston
 #
 # Student No: 2898842
+#
+# BSCH 4th year development project
+#
+# 31/05/2019
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import ( QFrame, QMessageBox)
@@ -215,4 +219,3 @@ class UIUserForm(object):
         face_encoding = np.array([1])
         self.label_face_captured.setText(_translate("MainWindow", "No Image Captured"))
         self.check_box.hide()
-
