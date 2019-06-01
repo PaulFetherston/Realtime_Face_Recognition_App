@@ -18,7 +18,6 @@ app = QApplication([])
 lv = LiveVideo()
 ui = UILiveSystem()
 w = MainWindow()
-
 ui.make_connection(lv)
 lv.make_connection(w)
 w.make_connection(lv)

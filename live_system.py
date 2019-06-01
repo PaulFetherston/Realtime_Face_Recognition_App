@@ -238,9 +238,13 @@ class UILiveSystem(object):
 
         if len(user_record) > 0:
             for row in user_record:
-                usr_id = str(row[0])
+                usr_id = row[0]
                 name = '{} {}'.format(row[1], row[2])
                 dept = row[3]
+
+            if usr_id not in user_id:
+                print("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
+                self.insert_tb1(usr_id)
 
         if name not in unauthorised_user:
             unauthorised_user.append(name)

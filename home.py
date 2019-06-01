@@ -46,7 +46,7 @@ class UIWindow(object):
 class MainWindow(QMainWindow):
     """MainWindow class"""
 
-    # A signal
+    # A signal to setup and send info
     changedValue = pyqtSignal(int)
 
     def __init__(self, parent=None):
@@ -104,18 +104,20 @@ class MainWindow(QMainWindow):
         self.on_changed_value(1)
 
     def end_realtime_face_recognition(self):
-        """Function to change the MainWindow display to show the live System page and"""
+        """Function to change the MainWindow display to show the live System page and
+        call a function to emit a signal to end the live video face recognition feed"""
         self.startUIWindow()
         self.on_changed_value(2)
         self.uiLiveSystem.reset_tables()
 
     def make_connection(self, slider_object):
-        # print("Realtime_face +++++++++++++ Make_connection : ", slider_object)
+        """Function to make a connection with the real_time_recognition"""
         slider_object.newValue.connect(self.get_slider_value)
 
     @pyqtSlot(int, int, int, str)
     def get_slider_value(self, flag, usr_id, loc, name):
-        # print("Realtime_face ++++++++++++++++ HOME get_slider_value : ", name)
+        """Function to receive data from real_time_face_recognition
+        - Three different flags to indicate where the info should be passed into the live systems tables"""
         if flag == 1:
             self.uiLiveSystem.insert_tb1(usr_id)
         if flag == 2:
@@ -125,17 +127,18 @@ class MainWindow(QMainWindow):
 
 
     def on_changed_value(self, value):
-        print('Home ********** on_changed_value : ', value)
+        """Function to send an in value to realtime_face_recognition"""
         self.changedValue.emit(value)
 
     # Confirm close window
     def closeEvent(self, event):
-
+        """Function to confirm the closing of the program"""
         reply = QMessageBox.question(self, 'Message',
                                      "Are you sure to quit?", QMessageBox.Yes |
                                      QMessageBox.No, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
+            """if acepted end live video and close the program"""
             self.end_realtime_face_recognition()
             event.accept()
         else:

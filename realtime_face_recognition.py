@@ -72,9 +72,14 @@ class LiveVideo(QObject):
         records = db_interface.db_retrieve()
 
         for row in records:
-            known_face_names.append(row[1])
-            users_authority.append(row[5])
-            user_id.append(row[0])
+            if row[0] in user_id:
+                index = user_id.index(row[0])
+                known_face_names[index] = row[1]
+                users_authority[index] = row[5]
+            else:
+                known_face_names.append(row[1])
+                users_authority.append(row[5])
+                user_id.append(row[0])
 
         for name in known_face_names:
             print('name = ', name)
