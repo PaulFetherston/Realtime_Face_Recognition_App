@@ -152,7 +152,6 @@ class UILiveSystem(object):
     def insert_tb1(self, id_usr):
         """Method to insert data to table 1
         -Known people on the site seen in any area regardless of authority level"""
-        print("Inserting into Table 1 user id = ", id_usr)
 
         # get the current time
         now = datetime.datetime.now()

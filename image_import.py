@@ -2,6 +2,10 @@
 # Paul Fetherston
 #
 # Student No: 2898842
+#
+# BSCH 4th year development project
+#
+# 31/05/2019
 
 import face_recognition
 import cv2
@@ -10,7 +14,7 @@ import numpy as np
 
 def add_user():
     # Variable to return if no image captured
-    face_encoding = np.array([1])
+    face_encoding = np.array([0])
 
     # Get a reference to camera
     video_capture = cv2.VideoCapture(0)
@@ -81,6 +85,7 @@ def add_user():
                 print('image_import : space bar pressed 1')
                 # Grab a single frame of video
                 captured = frame
+                # face_encoding = 0
                 face_encoding = face_recognition.face_encodings(captured)[0]
                 break
 

@@ -2,13 +2,17 @@
 # Paul Fetherston
 #
 # Student No: 2898842
-
+#
+# BSCH 4th year development project
+#
+# 31/05/2019
 
 import mysql.connector
 from mysql.connector import Error
 
 
 def db_retrieve():
+    """Method to return all records from the database"""
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
     records = 0
     try:
@@ -17,17 +21,13 @@ def db_retrieve():
         sql_query = """SELECT * FROM sdptest ORDER BY Id DESC"""
 
         if connection.is_connected():
-            db_info = connection.get_server_info()
-            print("Connected to mysql database... MySQL Server version on ", db_info)
 
             cursor = connection.cursor()
             cursor.execute(sql_query)
             records = cursor.fetchall()
-
-            print("Total number of rows = ", cursor.rowcount)
             cursor.close()
 
-        print('retrieved ******************************')
+        print('All data retrieved')
 
     except Error as e:
         connection.rollback()  # rollback if any exceptions
@@ -42,6 +42,7 @@ def db_retrieve():
 
 
 def db_insert(fname, sname, dob, dept, access):
+    """Method to to insert new user to the db and return the new users unique id"""
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
     new_user_id = 0
     try:
@@ -52,19 +53,15 @@ def db_insert(fname, sname, dob, dept, access):
         sql_user_id = """SELECT * FROM sdptest ORDER BY id DESC LIMIT 1"""
 
         if connection.is_connected():
-            db_info = connection.get_server_info()
-            print("Connected to mysql database... MySQL Server version on ", db_info)
-
+            # insert new user info
             cursor = connection.cursor()
             cursor.execute(sql_insert_query)
             connection.commit()
-
+            # Retrieve the new users ID
             cursor.execute(sql_user_id)
             records = cursor.fetchall()
-
-            print("Total number of rows ************ = ", cursor.rowcount)
+            # Assign the new users id to be returned
             for row in records:
-                print("Id =========== ", row[0])
                 new_user_id = row[0]
 
             print("Record inserted into table")
@@ -84,6 +81,8 @@ def db_insert(fname, sname, dob, dept, access):
 
 
 def db_search(fname, sname):
+    """Method to search the db for an existing user
+    - If found return the users information"""
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
     records = 0
     try:
@@ -93,21 +92,10 @@ def db_search(fname, sname):
                             """ % (fname, sname)
 
         if connection.is_connected():
-            db_info = connection.get_server_info()
-            print("Connected to mysql database... MySQL Server version on ", db_info)
 
             cursor = connection.cursor()
             cursor.execute(sql_search_query)
             records = cursor.fetchall()
-
-            print("Total number of rows ************ = ", cursor.rowcount)
-            for row in records:
-                print("Id =========== ", row[0])
-                print("name =========== ", row[1])
-                print("last =========== ", row[2])
-                print("dob =========== ", row[3])
-                print("dept =========== ", row[4])
-                print("Access =========== ", row[5])
 
             print("Searched Records")
 
@@ -126,12 +114,13 @@ def db_search(fname, sname):
 
 
 def db_id_search(user_id):
+    """Method to search the db based on the users id"""
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
     records = 0
     try:
         print("Search database:")
 
-        sql_search_query = """SELECT id, fname, sname, dept FROM sdptest WHERE id="%i";
+        sql_search_query = """SELECT id, fname, sname, dept, access FROM sdptest WHERE id="%i";
                             """ % user_id
 
         if connection.is_connected():
@@ -157,6 +146,7 @@ def db_id_search(user_id):
 
 
 def db_update(usr_id, fname, sname, dob, dept, access):
+    """Method to update a pre-existing user in the db"""
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
     try:
         print("Update database:")
@@ -165,8 +155,6 @@ def db_update(usr_id, fname, sname, dob, dept, access):
                             WHERE id="%i";""" % (fname, sname, dob, dept, access, usr_id)
 
         if connection.is_connected():
-            db_info = connection.get_server_info()
-            print("Connected to mysql database... MySQL Server version on ", db_info)
 
             cursor = connection.cursor()
             cursor.execute(sql_update_query)
@@ -188,6 +176,7 @@ def db_update(usr_id, fname, sname, dob, dept, access):
 
 
 def db_user_delete(usr_id):
+    """Method to delete a user from the db"""
     connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
     try:
         print("Delete User database:")
@@ -195,8 +184,6 @@ def db_user_delete(usr_id):
         sql_delete_query = """DELETE FROM sdptest WHERE id="%i";""" % usr_id
 
         if connection.is_connected():
-            db_info = connection.get_server_info()
-            print("Connected to mysql database... MySQL Server version on ", db_info)
 
             cursor = connection.cursor()
             cursor.execute(sql_delete_query)

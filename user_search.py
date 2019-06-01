@@ -3,8 +3,12 @@
 # Paul Fetherston
 #
 # Student No: 2898842
+#
+# BSCH 4th year development project
+#
+# 31/05/2019
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import (QPushButton, QMessageBox, QFrame)
 import image_import
 import db_interface
@@ -19,6 +23,7 @@ user_id = 0
 
 
 class UISearchUser(object):
+    """MainWindow display that encompases the search, display Db info and Edit db info"""
     def setupUI(self, MainWindow):
         MainWindow.setWindowTitle("Search User")
         MainWindow.setObjectName("MainWindow")
@@ -37,11 +42,6 @@ class UISearchUser(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.verticalLayout_2.addWidget(self.title)
 
-        # self.centralwidget.setStyleSheet(
-        #   "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(255, 0, 0); ")
-        # self.verticalLayoutWidget.setStyleSheet(
-        #    "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(0, 255, 0); ")
-
         self.formLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.formLayoutWidget.setGeometry(QtCore.QRect(130, 50, 451, 200))
         self.formLayoutWidget.setObjectName("formLayoutWidget")
@@ -51,9 +51,6 @@ class UISearchUser(object):
         self.formLayout.setContentsMargins(15, 0, 15, 0)
         self.formLayout.setVerticalSpacing(4)
         self.formLayout.setObjectName("formLayout")
-
-        # self.formLayoutWidget.setStyleSheet(
-        #     "background-color: rgb(255, 255, 255); margin:5px; border:1px solid rgb(0, 0, 255); ")
 
         self.label_fname = QtWidgets.QLabel(self.formLayoutWidget)
         self.label_fname.setObjectName("label_fname")
@@ -186,49 +183,47 @@ class UISearchUser(object):
         self.mw = MainWindow
 
     def retranslateUi(self, MainWindow):
-        # TODO Comment Code
+        """Method to name all labels and buttons"""
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "User Search"))
         self.title.setText(_translate("MainWindow", "Search User"))
         self.label_fname.setText(_translate("MainWindow", "First Name : "))
-
-        self.fname_lineEdit.setText(_translate("MainWindow", "Paul"))
-
         self.label_lname.setText(_translate("MainWindow", "Last Name : "))
         self.label_no_result.setText(_translate("MainWindow", "No User Found !!"))
         self.btn_search.setText(_translate("MainWindow", "Search"))
         self.btn_cancel.setText(_translate("MainWindow", "Cancel"))
         self.btn_reset.setText((_translate("MainWindow", "Reset")))
-
         self.label_sname.setText(_translate("MainWindow", "Second Name : "))
         self.label_dob.setText(_translate("MainWindow", "Date of Birth : "))
         self.label_dept.setText(_translate("MainWindow", "Department : "))
         self.label_authority.setText(_translate("MainWindow", "Access Level"))
         self.face_capture_pushButton.setText(_translate("MainWindow", "Capture "))
         self.label_face_captured.setText(_translate("MainWindow", "Image Captured : "))
-
         self.btn_delete_user.setText(_translate("MainWindow", "Delete User"))
-
         self.label_user_updated.setText(_translate("MainWindow", "User Info Successfully Updated"))
         self.label_user_deleted.setText(_translate("MainWindow", "User Successfully Deleted"))
 
     def search_db(self):
-        print("DB Search")
+        """Method to search the db for a user and display the results"""
         global user_id
+
+        # Call the db_search method in the db_interface page. Pass in the first and second names
         db_record = db_interface.db_search(self.fname_lineEdit.text(), self.lname_lineEdit.text())
 
+        # no record found display label to inform user
         if len(db_record) < 1:
             self.label_sname.hide()
             self.sname_lineEdit.hide()
             self.label_no_result.show()
 
-            self.label_fname.setText("First Name :")
+            self.label_fname.setText("First Name : ")
             self.fname_lineEdit.setText(self.fname_lineEdit.text())
             self.label_lname.setText("Last Name : ")
             self.lname_lineEdit.setText(self.lname_lineEdit.text())
             self.fname_lineEdit.setReadOnly(False)
             self.lname_lineEdit.setReadOnly(False)
-
+        # If record found set up display for user information
+        # and display information about the user
         else:
             self.label_no_result.hide()
             self.label_fname.setText("User Id : ")
@@ -260,7 +255,9 @@ class UISearchUser(object):
         self.check_box.setChecked(QtCore.Qt.Checked)
 
     def user_edit(self):
-        print("EDIT BUTTON")
+        """Method called from the edit user button when user db info is displayed
+        - Make all fields editable except the user id as this is unique to the user
+        - Option to capture a new image of the users face is given"""
         self.title.setText("Edit User")
         self.lname_lineEdit.setReadOnly(False)
         self.sname_lineEdit.setReadOnly(False)
@@ -275,8 +272,9 @@ class UISearchUser(object):
 
         global face_encoding
         global user_id
-        print("User_edit user id =============== ", user_id)
 
+        # Temporarily store the users face encodings in a temp face_encodings variable
+        # by pulling the users .pickle file from the pickle folder
         directory_in_str = "/home/paul/sdp/pickle_folder/user_{}.pickle".format(user_id)
         pickle_in = open(directory_in_str, "rb")
         loaded_person = pickle.load(pickle_in)
@@ -284,35 +282,35 @@ class UISearchUser(object):
 
     # Launch camera to take a picture of a new person
     def launch_webcam(self):
-        # TODO Comment Code
-        # TODO Delete old pickle and save new if new face
+        """Method to launch the camera to capture a new image of a user"""
         global face_encoding
         global new_capture
 
+        # Call the image_import.add_user method which launches the camera and
+        # returns the face encodings if a new picture is taken
         new_face_encoding = image_import.add_user()
 
+        # Check if a new image was returned from the add_user method
         if len(new_face_encoding) == 128:
-            print("new face")
+            # If new image - set the temp face_encodings variable with the new image
+            # - set new_capture to True and update the on screen lable to confirm a new image has been taken
             face_encoding = new_face_encoding
             new_capture = True
             self.label_face_captured.setText("New Image Captured :")
-        else:
-            print("no new face")
 
     def user_save(self):
-        # TODO Validation on user
-        # TODO Implement save user button
-        print("Save User")
-
+        """Method to save user info in the db after editing information
+        - Also update the pickle folder with a new image encodings if a new image was captured"""
         global user_id
         global new_capture
 
+        # Call the validator function which returns true if the user information is valid for uploading to the db
         form_valid = validator.form_validation(self.fname_lineEdit.text(), self.sname_lineEdit.text(),
                                                self.dob_dateEdit.date().toPyDate(), self.dept_lineEdit.text(),
                                                self.authority_spinBox.value(), len(face_encoding))
 
+        # Do the following if the form passes validation
         if form_valid:
-            print('user form call db test')
             # Put user info into variables
             fname = self.lname_lineEdit.text()
             sname = self.sname_lineEdit.text()
@@ -320,45 +318,53 @@ class UISearchUser(object):
             dept = self.dept_lineEdit.text()
             access = self.authority_spinBox.value()
 
-            # Pass user info to script to insert into DB and return the new user's ID number
+            # Pass user info to db_interface to update the DB
             db_interface.db_update(user_id, fname, sname, dob, dept, access)
 
             if new_capture:
-                print("New Face Encoding")
+                # If a new image of the user is captured remove the old .pickle file from the pickle folder
                 os.remove('/home/paul/sdp/pickle_folder/user_{}.pickle'.format(user_id))
-                # Create a dictionary with user ID and the face encoding
+                # Create a dictionary with user ID and the new face encoding
                 ex_dict = {1: 'user_{}'.format(user_id), 2: face_encoding}
-                # Pickle dictionary. Name it with the user id
+                # Pickle dictionary. Name it with the user id and put it in the pickle folder
                 with open('/home/paul/sdp/pickle_folder/user_{}.pickle'.format(user_id), 'wb') as f:
                     pickle.dump(ex_dict, f)
 
                 f.close()
+                # Reset the capture so a new image can be taken if necessarily
                 new_capture = False
 
-            else:
-                print("NO New face encoding")
-
+            # Returns to the edit window to display the newly edited user info and
+            # shows the user updated label to confirm the users info has successfully been updated
             self.user_info()
             self.label_user_updated.show()
-
+        # Do the following if the form doesn't pass validation
         else:
+            # Display Message box to inform the user the form is incomplete
             QtWidgets.QMessageBox.information(QtWidgets.QMainWindow(), 'Message', 'Form Not Complete',
                                               QMessageBox.Ok)
 
     def user_del(self):
-
+        """Method to confirm if the user is to be deleted from the db
+        - Display a messagebox to confirm deletion or cancel deletion"""
         reply = QMessageBox.question(self.mw, 'Delete User',
                                      "Are you sure you wish to delete this user?", QMessageBox.Yes |
                                      QMessageBox.No, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
+            # Confirmed deletion calls the confirm_user_del
             self.confirm_user_del()
 
     def confirm_user_del(self):
-        print("Delete User Confirmed")
+        """Method to delete all db and pickle folder information about the user"""
+
+        # Remove .pickle file from pickle folder
         os.remove('/home/paul/sdp/pickle_folder/user_{}.pickle'.format(user_id))
+        # Call user delete method in the db_interface file. Pass the user id to be deleted
         db_interface.db_user_delete(user_id)
 
+        # Disable all filds from being editable and hide the required buttons and labels from view
+        # Show label confirming user deletion
         self.fname_lineEdit.setReadOnly(True)
         self.lname_lineEdit.setReadOnly(True)
         self.sname_lineEdit.setReadOnly(True)
@@ -375,7 +381,8 @@ class UISearchUser(object):
         self.btn_delete_user.hide()
 
     def user_info(self):
-        """This is a docstring"""
+        """Method to set up the display for the user information passed
+        - No field can be edited as it is only displayed info at the point"""
         self.title.setText("User Info")
         self.fname_lineEdit.setReadOnly(True)
         self.lname_lineEdit.setReadOnly(True)

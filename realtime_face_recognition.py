@@ -64,31 +64,48 @@ class LiveVideo(QObject):
         id_usr = 0
         access = 0
 
+        # Clear the encodings
+        del known_face_encodings[:]
+        del known_face_names[:]
+        del users_authority[:]
+        del user_id[:]
+
         # load each .pickle file to get known person face encodings
         # and add the encodings to the know_faces_encodings array
+        # As the loading of the pickle files is not consistent we must
+        # make a call to the db for each pickle file loaded
         for path in path_list:
             # because path is object not string
             path_in_str = str(path)
             pickle_in = open(path_in_str, "rb")
             loaded_person = pickle.load(pickle_in)
+            # Add the face encoding to the array
             known_face_encodings.append(loaded_person[2])
 
-        # Retrieve all users from the database
-        records = db_interface.db_retrieve()
+            print("Pickle id = ", loaded_person[1])
+            print("pickle user id = ", loaded_person[4])
 
-        # work through each row from the db
-        for row in records:
-            # If the user is already in the arrays then update there name and authorisation level
-            # This is done when a known persons db record is updated
-            if row[0] in user_id:
-                index = user_id.index(row[0])
-                known_face_names[index] = row[1]
-                users_authority[index] = row[5]
-            # If they are not in the arrays them add the new users info to the arrays
-            else:
+            # retrieve the user id info from the db
+            user = db_interface.db_id_search(loaded_person[4])
+            # Populate the arrays
+            for row in user:
                 known_face_names.append(row[1])
-                users_authority.append(row[5])
+                users_authority.append(row[4])
                 user_id.append(row[0])
+
+        # print("The length of the known_face_encodings = ", len(known_face_encodings))
+        #
+        # for u in known_face_names:
+        #     print("name : ", u)
+        #
+        # for a in users_authority:
+        #     print("authority = ", a)
+        #
+        # for b in user_id:
+        #     print("User ID = ", b)
+        #
+        # for c in unknown_names:
+        #     print("Unknown names = ", c)
 
         # Get a reference to webcam
         video_capture = cv2.VideoCapture(0)
