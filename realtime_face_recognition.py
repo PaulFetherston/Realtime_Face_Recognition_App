@@ -69,6 +69,12 @@ class LiveVideo(QObject):
         del known_face_names[:]
         del users_authority[:]
         del user_id[:]
+        del unknown_face_encodings[:]
+        del unknown_names[:]
+        unknown_user_count = 0
+
+        for nam in unknown_names:
+            print("names = ", nam)
 
         # load each .pickle file to get known person face encodings
         # and add the encodings to the know_faces_encodings array
@@ -92,20 +98,6 @@ class LiveVideo(QObject):
                 known_face_names.append(row[1])
                 users_authority.append(row[4])
                 user_id.append(row[0])
-
-        # print("The length of the known_face_encodings = ", len(known_face_encodings))
-        #
-        # for u in known_face_names:
-        #     print("name : ", u)
-        #
-        # for a in users_authority:
-        #     print("authority = ", a)
-        #
-        # for b in user_id:
-        #     print("User ID = ", b)
-        #
-        # for c in unknown_names:
-        #     print("Unknown names = ", c)
 
         # Get a reference to webcam
         video_capture = cv2.VideoCapture(0)
@@ -147,7 +139,7 @@ class LiveVideo(QObject):
                     id_usr = 0
 
                     # If the detected face is neither in the known or Unknown list add it to the Unknown encodings list
-                    # Also increase the unknown user count and safe this name. I.e - Unknown - 1, Unknown - 2
+                    # Also increase the unknown user count and save this name. I.e - Unknown - 1, Unknown - 2
                     # Both the encoding and name are added to there respective arrays at the same time
                     # so both have matching index values
                     if not any(matches) and not any(unknown_matches):

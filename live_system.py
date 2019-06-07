@@ -62,13 +62,13 @@ class UILiveSystem(object):
         a.addWidget(l_a1)
         a.addWidget(self.tableWidget1)
 
-        l_a2 = QtWidgets.QLabel('Unknown People Alerts')
+        l_a2 = QtWidgets.QLabel('Unknown People')
         a_b = QVBoxLayout()
         a_b.setContentsMargins(5, 5, 5, 5)
         a_b.addWidget(l_a2)
         a_b.addWidget(self.tableWidget2)
 
-        l_a3 = QtWidgets.QLabel('Unauthorised Access')
+        l_a3 = QtWidgets.QLabel('Unauthorised Access Level 3')
         a_b_c = QVBoxLayout()
         a_b_c.setContentsMargins(5, 5, 5, 5)
         a_b_c.addWidget(l_a3)
@@ -193,7 +193,7 @@ class UILiveSystem(object):
         # get the time and date
         now = datetime.datetime.now()
         # create a name consisting of the user name and their location
-        #This allows a person to be entered onto the table for each time
+        # This allows a person to be entered onto the table for each time
         # they are seen in an area without the correct aurthorisation
         name_loc = '{} - {}'.format(unknown_name, str(loc))
 

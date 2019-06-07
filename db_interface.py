@@ -83,13 +83,14 @@ def db_insert(fname, sname, dob, dept, access):
 def db_search(fname, sname):
     """Method to search the db for an existing user
     - If found return the users information"""
-    connection = mysql.connector.connect(host='localhost', database='test', user='root', password='Jennifer1')
+    connection = mysql.connector.connect(host='localhost', database='test', user='root',
+                                         password='Jennifer1')
     records = 0
     try:
         print("Search database:")
 
-        sql_search_query = """SELECT id, fname, sname, dob, dept, access FROM sdptest WHERE fname="%s" AND sname="%s";
-                            """ % (fname, sname)
+        sql_search_query = """SELECT id, fname, sname, dob, dept, access FROM sdptest
+                            WHERE fname="%s" AND sname="%s";""" % (fname, sname)
 
         if connection.is_connected():
 
